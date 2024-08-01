@@ -1,0 +1,689 @@
+﻿@{
+    string? UserName = ViewContext.HttpContext.Session.GetString("UserName");
+    DateTime currentDate = DateTime.Now;
+    string formattedDate = currentDate.ToString("dd-MM-yyyy");
+}
+<div class="col-xl-12 col-md-12">
+    <div class="card table-card">
+        <div class="card-header">
+            <h5 class="webtitle">Business Partner Attchaments</h5>
+            <div class="card-header-right">
+                <ul class="list-unstyled card-option">
+                    <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                    <li><i class="fa fa-window-maximize full-card"></i></li>
+                    <li><i class="fa fa-minus minimize-card"></i></li>
+                    <li><i class="fa fa-refresh reload-card"></i></li>
+                    <li hidden><i class="fa fa-trash close-card"></i></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-block shadow">
+            <!-- Row start -->
+            <div class="row p-2">
+                <div class="col-lg-12 col-xl-12 ">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs  tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" id="Create_User_Tab" href="#Create_User" role="tab">Create Attachment</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#All_Users" role="tab">All Attachments</a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content tabs card-block">
+                        <div class="tab-pane active p-0 m-0 mt-2" id="Create_User" role="tabpanel">
+                            <form id="From" class="w-100 mt-4 p-4 border">
+                                <div class="row justify-content-end mt-1 mb-3">
+                                    <div class="col-auto">
+                                        <label class="switch">
+                                            <input type="checkbox" value="Y" checked name="IsActive" id="IsActive" class="toggleSwitch form-control form-control-sm">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row mt-2">
+                                    <input hidden name="BPAttachId" id="BPAttachId" value="" type="text" placeholder="BPAttachId" class="form-control form-control-sm Form_Elem" />
+                                    <div class="col-md-4 mt-1 mb-1">
+                                        <label for="BPId">Business Partner</label>
+                                        <select  name="BPId" id="BPId" type="text" class="form-control  form-control-sm Form_Elem">
+                                            <option value="">Select Business Partner</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mt-1 mb-1">
+                                        <label for="StateCode">
+                                            Choose File 
+                                        </label>
+                                        <div class="input-group p-0">
+                                            <input name="FileName" id="FileName" type="file" class="form-control form-control-sm" placeholder="Choose File">
+                                            <div class="input-group-append p-0">
+                                                <input name="FileExt" type="text" id="FileExt" readonly class="form-control h-100 w-25 form-control-sm" placeholder="File Extention">
+                                                <button data-bs-target="#exampleModalToggle" data-bs-toggle="modal" type="button" class="btn view btn-primary h-100 btn-sm" id="View">View</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mt-1 mb-1 d-none">
+                                        <label for="CreatedBy">Created By</label>
+                                        <input name="CreatedBy" id="CreatedBy" readonly type="text" value="@UserName" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-4 mt-1 mb-1 d-none">
+                                        <label for="UpdatedBy">Updated By</label>
+                                        <input name="UpdatedBy" id="UpdatedBy" readonly type="text" value="@UserName" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-4 mt-1 mb-1 d-none">
+                                        <label for="CreateDate">Create Date</label>
+                                        <input name="CreateDate" id="CreateDate" readonly type="text" value="@formattedDate" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-4 mt-1 mb-1 d-none">
+                                        <label for="UpdateDate">Update Date</label>
+                                        <input name="UpdateDate" id="UpdateDate" readonly type="text" value="@formattedDate" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-12 mt-3">
+                                        <button type="button" id="Form_Delete_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm btn-danger">Delete</button>
+                                        <button type="button" id="Form_Update_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm text-white btn-info">Update</button>
+                                        <button type="button" id="Form_Save_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm btn-success">Save</button>
+                                        <button type="reset" id="Form_reset_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm btn-dark">Reset</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane p-3" id="All_Users" role="tabpanel">
+                            <div class="row p-3  mt-2 border">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped   table-hover table-bordered w-100" id="Table">
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Row end -->
+        </div>
+    </div>
+</div>
+<!--Document view Modal-->
+<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel">View Document</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive document-viewer" style="height:700px!important; ">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="downloadLink" style="display: none;"><button type="button" class="btn btn-primary">Download Document</button> </a>
+            </div>
+        </div>
+    </div>
+</div>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+
+        //Get Dropdown Data
+        {
+            // GET Country
+            $.ajax({
+                url: '@Url.Action("BUSINESSPARTNER","GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "<option value=''>Select Business Partner</option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].BPId + "'>" + response[i].BPCode + "-" + response[i].BPName + "</option>";
+                        }
+                        $("#BPId").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+        }
+            let fileObject={};
+        //Get Data From File Input 
+        {
+            // Event listener for file input change
+            $('#FileName').change(function () {
+                fileObject = {};
+                var fileInput = $(this)[0];
+                if (fileInput.files.length > 0) {
+                    var file = fileInput.files[0];
+                    var fileName = file.name;
+                    var fileExt = fileName.split('.').pop().toLowerCase(); // Extract extension and convert to lowercase
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var fileData = e.target.result;
+                        $("#FileExt").val(fileExt);
+                        fileObject = {
+                            FileName: fileName,
+                            FileExt: fileExt,
+                            FileData: fileData,
+                            Base64Data: btoa(fileData)
+                        };
+                    };
+                    if (fileExt === 'xls' || fileExt === 'xlsx' || fileExt === 'csv' || fileExt === 'pdf') {
+                        reader.readAsBinaryString(file);
+                    } else {
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+
+            $(".view").click(function () {
+                // Display the content in the document-viewer div
+                var fileData = fileObject.FileData;
+                var fileExt = fileObject.FileExt;
+                if (fileExt === 'xls' || fileExt === 'xlsx') {
+                    var workbook = XLSX.read(fileData, { type: 'binary' });
+                    var sheetName = workbook.SheetNames[0];
+                    var excelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+                    var tableHtml = '<table class="table table-bordered table-striped   table-hover table-bordered w-100" border="1px">';
+                    for (var i = 0; i < excelData.length; i++) {
+                        tableHtml += '<tr>';
+                        for (var j = 0; j < excelData[i].length; j++) {
+                            var cellValue = excelData[i][j];
+                            var colspan = 1;
+                            while (j + colspan < excelData[i].length && excelData[i][j + colspan] === cellValue) {
+                                colspan++;
+                            }
+                            if (colspan > 1) {
+                                tableHtml += '<td colspan="' + colspan + '">' + cellValue + '</td>';
+                                j += colspan - 1;
+                            } else {
+                                tableHtml += '<td>' + cellValue + '</td>';
+                            }
+                        }
+                        tableHtml += '</tr>';
+                    }
+                    tableHtml += '</table>';
+                    $(".document-viewer").html(tableHtml);
+                    // Show download link
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + btoa(fileData));
+                    downloadLink.attr('download', fileObject.FileName);
+                    downloadLink.show();
+                } else if (fileExt === 'csv') {
+                    // Render CSV file as HTML table
+                    var csvData = Papa.parse(fileData, { header: true, skipEmptyLines: true });
+                    var tableHtml = '<table class="table table-bordered table-striped   table-hover table-bordered w-100">';
+                    csvData.data.forEach(function (row) {
+                        tableHtml += '<tr>';
+                        for (var key in row) {
+                            tableHtml += '<td>' + row[key] + '</td>';
+                        }
+                        tableHtml += '</tr>';
+                    });
+                    tableHtml += '</table>';
+
+                    $(".document-viewer").html(tableHtml);
+
+                    // Show download link
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', 'data:text/csv;base64,' + btoa(fileData));
+                    downloadLink.attr('download', fileObject.FileName);
+                    downloadLink.show();
+                } else if (fileExt === 'pdf') {
+                    renderPdf(fileData);
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', 'data:application/pdf;base64,' + btoa(fileData));
+                    downloadLink.attr('download', fileObject.FileName);
+                    downloadLink.show();
+                } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExt)) {
+                    var imageHtml = '<img src="' + fileData + '" />';
+                    $(".document-viewer").html(imageHtml);
+                    // Show download link
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', fileData);
+                    downloadLink.attr('download', fileObject.FileName);
+                    downloadLink.show();
+                }
+                else {
+                  //  $(".document-viewer").text('Unsupported document type.');
+                   // $('.downloadLink').hide();
+                }
+            });
+            function renderPdf(pdfData) {
+                if (pdfData) {
+                    const objectElement = $('<object>');
+                    objectElement.attr('data', 'data:application/pdf;base64,' +pdfData);
+                    objectElement.attr('type', 'application/pdf');
+                    objectElement.css('width', '100%');
+                    objectElement.css('height', '800px');
+                    $('.document-viewer').html(objectElement);
+                } else {
+                    $('.document-viewer').text('No Data Found!');
+                }
+            }
+        
+        }
+
+        //Region Add
+        {
+            $("#Form_Save_btn").click(function () {
+                let isValid = true;
+                let formData = {};
+                $("#From input,select,textarea").each(function () {
+                    var inputName = $(this).attr('name').trim();
+                    var inputValue = "";
+                    if ($(this).find('textarea').lenght) {
+                        inputValue = $(this).text();
+                    } else {
+                        inputValue = $(this).val();
+                    }
+                    var mandatoryfields = ["FileName", "FileExt", "BPId"];
+                    if (mandatoryfields.includes(inputName) && inputValue === "") {
+                        $("#" + inputName).addClass("border-danger");
+                        isValid = false;
+                        notify("Please Fill All Mandatory Feilds", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                        return false;
+                    } else {
+                        $("#" + inputName).removeClass("border-danger");
+                    }
+                    if (inputName !== undefined && inputName !== "" && inputName !== null) {
+                        if (inputName == "FileName") {
+                          
+                            formData[inputName] = fileObject.FileName;
+                        }else{
+
+                           formData[inputName] = inputValue;
+                        }
+                    }
+                });
+                if (fileObject.FileExt == "xlsx" || fileObject.FileExt == "csv" || fileObject.FileExt == "pdf") {
+                    formData["FileData"] = btoa(fileObject.FileData);
+                } else {
+                    formData["FileData"] = fileObject.FileData;
+                }
+                //Call Api
+                if (isValid && formData != "") {
+                    $.ajax({
+                        url: '@Url.Action("POSTDATA","BPAttachment")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: formData,
+                        success: function (response) {
+                            if (response !== "") {
+                                notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+                                $("#From")[0].reset();
+                                LoadTableData();
+                            }
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                }
+            })
+        }
+        //Region Update
+        {
+            $("#Form_Update_btn").click(function () {
+                let isValid = true;
+                let formData = {};
+                $("#From input,select,textarea").each(function () {
+                    var inputName = $(this).attr('name').trim();
+                    var inputValue = "";
+                    if ($(this).find('textarea').lenght) {
+                        inputValue = $(this).text();
+                    } else {
+                        inputValue = $(this).val();
+                    }
+                    var mandatoryfields = ["FileName", "FileExt", "BPId"];
+                    if (mandatoryfields.includes(inputName) && inputValue === "") {
+                        $("#" + inputName).addClass("border-danger");
+                        isValid = false;
+                        notify("Please Fill All Mandatory Feilds", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                        return false;
+                    } else {
+                        $("#" + inputName).removeClass("border-danger");
+                    }
+                    if (inputName !== undefined && inputName !== "" && inputName !== null) {
+
+                        if (inputName == "FileName") {
+                            formData[inputName] = fileObject.FileName;
+                        } else {
+                            formData[inputName] = inputValue;
+                        }
+
+                    }
+                });
+                //Call Api
+                if (isValid && formData !== "") {
+                    $.ajax({
+                        url: '@Url.Action("UPDATEDATA","BPAttachment")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: formData,
+                        success: function (response) {
+                            if (response.success) {
+                                $("#From")[0].reset();
+                                LoadTableData();
+                                HideBtn()
+                                notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+                            } else {
+                                notify("Error To Updating Data", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                            }
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                }
+            })
+        }
+        //Region Delete
+        {
+            $("#Form_Delete_btn").click(function () {
+                Delete($("#BPAttachId").val());
+            })
+            $(document).on("click", ".table_delete", function () {
+                var $row = $(this).closest("tr");
+                var id = $row.find('td.tbl_Main_ID').text();
+                Delete(id);
+            })
+        }
+        //Region Select Row Data
+        {
+            $(document).on("click", ".table_edit", function () {
+                var $row = $(this).closest("tr");
+                var rowObject = {};
+                $row.find('td').each(function (index) {
+                    var $td = $(this);
+                    var key = $td.closest('table').find('th').eq(index).text().trim().replace(/[.,()%\- ]/g, '');
+                    if ($td.find('input').length) {
+                        rowObject[key] = $td.find('input').val();
+                    }
+                    else if ($td.find('textarea').length) {
+                        rowObject[key] = $td.find('textarea').val();
+                    }
+                    else if ($td.find('img').length) {
+                        rowObject[key] = $td.find('img').attr("src");
+                    } else if ($td.find('select').length) {
+                        //  rowObject[key] = $td.find('select option:selected').text().trim();
+                        //  rowObject['TaxCodeval'] = $td.closest('tr').find('.Taxc option:selected').val();
+                        //  rowObject['UomEntryVal'] = $td.closest('tr').find('.Uomc1 option:selected').val();
+                    } else {
+                        rowObject[key] = $td.text().trim();
+                    }
+                });
+                var fileInput = $('#FileName');
+                var newFileInput = $("<input type='file' id='FileName' />");
+                var blob = new Blob([rowObject.FileData], { type: 'application/octet-stream' });
+                var fileName = rowObject.FileName;  // Replace with the desired file name
+                var file = new File([blob], fileName, { type: 'application/octet-stream' });
+                var filesList = new DataTransfer();
+                filesList.items.add(file);
+                newFileInput[0].files = filesList.files;
+                $("#FileExt").val(rowObject.FileExtention)
+                $("#BPId").val(rowObject.BPId)
+                fileInput.replaceWith(newFileInput);
+                var fileData = "";  // Replace with the actual data
+                if (rowObject.FileExtention === 'xls' || rowObject.FileExtention === 'xlsx') {
+                    var workbook = XLSX.read(atob(rowObject.FileData), { type: 'binary' });
+                    var sheetName = workbook.SheetNames[0];
+                    var excelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+                    var tableHtml = '<table class="table table-bordered table-striped   table-hover table-bordered w-100" border="1px">';
+                    for (var i = 0; i < excelData.length; i++) {
+                        tableHtml += '<tr>';
+                        for (var j = 0; j < excelData[i].length; j++) {
+                            var cellValue = excelData[i][j];
+                            var colspan = 1;
+                            while (j + colspan < excelData[i].length && excelData[i][j + colspan] === cellValue) {
+                                colspan++;
+                            }
+                            if (colspan > 1) {
+                                tableHtml += '<td colspan="' + colspan + '">' + cellValue + '</td>';
+                                j += colspan - 1;
+                            } else {
+                                tableHtml += '<td>' + cellValue + '</td>';
+                            }
+                        }
+                        tableHtml += '</tr>';
+                    }
+                    tableHtml += '</table>';
+                    $(".document-viewer").html(tableHtml);
+                    // Show download link
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + btoa(fileData));
+                    downloadLink.attr('download', fileObject.FileName);
+                    downloadLink.show();
+                } else if (rowObject.FileExtention === 'csv') {
+                    // Render CSV file as HTML table
+                    var csvData = Papa.parse(btoa(rowObject.FileData), { header: true, skipEmptyLines: true });
+                    var tableHtml = '<table class="table table-bordered table-striped   table-hover table-bordered w-100">';
+                    csvData.data.forEach(function (row) {
+                        tableHtml += '<tr>';
+                        for (var key in row) {
+                            tableHtml += '<td>' + row[key] + '</td>';
+                        }
+                        tableHtml += '</tr>';
+                    });
+                    tableHtml += '</table>';
+
+                    $(".document-viewer").html(tableHtml);
+
+                    // Show download link
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', 'data:text/csv;base64,' + btoa(rowObject.FileData));
+                    downloadLink.attr('download', rowObject.FileName);
+                    downloadLink.show();
+                } else if (rowObject.FileExtention === 'pdf') {
+                    renderPdf(rowObject.FileData);
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', 'data:application/pdf;base64,' + btoa(rowObject.FileData));
+                    downloadLink.attr('download', fileObject.FileName);
+                    downloadLink.show();
+                } else {
+                     var imageHtml = '<img src="' + rowObject.FileData + '" />';
+                     $(".document-viewer").html(imageHtml);
+                     // Show download link
+                     var downloadLink = $('.downloadLink');
+                     downloadLink.attr('href', rowObject.FileData);
+                     downloadLink.attr('download', rowObject.FileName);
+                     downloadLink.show();
+                }
+               
+
+
+
+
+                $("#CreatedBy").val(rowObject.CreatedBy)
+                $("#UpdatedBy").val(rowObject.UpdatedBy)
+                var UpdateDate = SplitDatebyspace(rowObject.UpdateDate)
+                $("#UpdateDate").val(UpdateDate)
+                var CreateDate = SplitDatebyspace(rowObject.CreateDate)
+                $("#CreateDate").val(CreateDate)
+                $("#IsActive").val(rowObject.Active)
+                if (rowObject.Active == "Y") {
+                    $("#IsActive").prop("checked", true);
+                }
+                if (rowObject.Active == "N") {
+                    $("#IsActive").prop("checked", false);
+                }
+                ShowBtn()
+                $("#Create_User_Tab").click();
+            })
+        }
+        //Function to handle form reset
+        {
+            $("#Form_reset_btn").click(function () {
+                $(".Form_Elem").removeClass("border-danger");
+            });
+        }
+        //Function Btn Opration
+        {
+            $("#Form_reset_btn").click(function () { HideBtn() })
+            function ShowBtn() {
+                $("#Form_Delete_btn").show();
+                $("#Form_Update_btn").show();
+                $("#Form_Save_btn").hide();
+            }
+            function HideBtn() {
+                $("#Form_Save_btn").show();
+                $("#Form_Delete_btn").hide();
+                $("#Form_Update_btn").hide();
+            }
+        }
+        //region All functions
+        {
+
+           
+            // Function to retrieve menu data
+            LoadTableData();
+            function LoadTableData() {
+                $.ajax({
+                    url: '@Url.Action("GET", "BPAttachment")', // Update with your API endpoint for retrieving menu data
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                            ApplyDatatable(response, "Table")
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        console.error('Error:', error.responseText);
+                    }
+                });
+            }
+            //format date
+            function formatAndSetDate(inputDate) {
+                const parts = inputDate.split(' ');
+                const datePart = parts[0];
+                const timePart = parts[1];
+                const [day, month, year] = datePart.split('-');
+                const formattedDate = `${year}-${month}-${day}`;
+                const formattedDateTime = `${formattedDate} ${timePart}`;
+                return formattedDate;
+            }
+            function SplitDatebyspace(inputDate) {
+                const parts = inputDate.split(' ');
+                return parts[0];
+
+            }
+            //Apply Datatable
+            function ApplyDatatable(jsonData, Table_Id) {
+                if ($.fn.DataTable.isDataTable('#' + Table_Id)) {
+                    $('#' + Table_Id).DataTable().destroy();
+                }
+                var table = $('#' + Table_Id).DataTable({
+                    data: jsonData,
+                    columns: [
+                        {
+                            data: null,
+                            title: "Sr No",
+                            className: 'tbl_Sr_no no-wrap text-center',
+                            render: function (data, type, row, meta) {
+                                // 'meta.row' gives the index of the row
+                                return meta.row + 1;
+                            }
+                        },
+                        {
+                            data: null,
+                            title: 'Action',
+                            className: 'text-center',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                return '<i class="fa fa-edit table_edit text-primary mr-1"></i> <i class="fa fa-trash text-danger mr-2  table_delete"></i>';
+                            }
+                        },
+                        {
+                            data: 'IsActive',
+                            title: 'Active',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                if (data == "Y") {
+                                    return `<center><label style="margin:0px!important; padding:0px!important;" class="tblswitch p-0 m-0">
+                                                                                        <input type="checkbox" disabled value="`+ data + `" checked name="IsActive" class="tbltoggleSwitch form-control form-control-sm ">
+                                                                                <span class="tblslider"></span>
+                                                                                </label></center>`;
+                                } else {
+                                    return `<center><label class="tblswitch">
+                                                                                            <input type="checkbox" disabled value="`+ data + `"  name="IsActive" class="tbltoggleSwitch form-control form-control-sm ">
+                                                                                    <span class="tblslider"></span>
+                                                                                </label></center>`;
+                                }
+
+                            }
+                        },
+                        { data: 'BPAttachId', title: 'BPAttachId', className: 'tbl_StateId d-none tbl_Main_ID' },
+                        { data: 'BPId', title: 'BPId', className: 'tbl_BPId d-none' },
+                        { data: 'BPCode', title: 'Code', className: 'tbl_BPCode' },
+                        { data: 'BPName', title: 'Business Partner Name', className: 'tbl_BPName' },
+                        { data: 'FileName', title: 'File Name', className: 'tbl_StateName' },
+                        { data: 'FileExt', title: 'File Extention', className: 'tbl_CntryId' },
+                        { data: 'FileData', title: 'FileData', className: 'tbl_CntryId d-none' },
+                        { data: 'CreatedBy', title: 'Created By', className: 'tbl_CreatedBy d-none' },
+                        { data: 'CreateDate', title: 'Create Date', className: 'tbl_CreateDate d-none' },
+                        { data: 'UpdatedBy', title: 'Updated By', className: 'tbl_UpdatedBy d-none' },
+                        { data: 'UpdateDate', title: 'Update Date', className: 'tbl_UpdateDate d-none' },
+                        // Add more columns as needed
+                    ],
+                    "columnDefs": [
+                        { "targets": '_all', "className": 'dt-no-wrap' }
+                    ],
+                    ordering: false,
+                    paging: true,
+                    retrieve: true,
+                    searching: true,
+                    responsive: true,
+                    colReorder: false,
+                });
+            }
+            //Delete
+            function Delete(ID) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This Attachment Is Permanetly Delete Form system..!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    confirmButtonColor: 'red',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("DELETE","BPAttachment")',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: { Id: ID },
+                            success: function (response) {
+                                if (response.success) {
+                                    $("#From")[0].reset();
+                                    LoadTableData();
+                                    HideBtn()
+                                    notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+                                    Swal.fire('Deleted!', 'Your data has been deleted.', 'success');
+                                } else {
+                                    notify("Error To Updating Data", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                                }
+                            },
+                            error: function (error) {
+                                notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                                console.error('Error:', error.responseText);
+                            }
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire('Cancelled', 'Your action has been cancelled.', 'error');
+                    }
+                });
+
+            }
+        }
+    });
+</script>
+

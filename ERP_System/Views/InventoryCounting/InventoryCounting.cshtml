@@ -1,0 +1,2304 @@
+﻿@{
+    string? UserName = ViewContext.HttpContext.Session.GetString("UserName");
+    string? StateId = ViewContext.HttpContext.Session.GetString("StateId");
+    string? CntryId = ViewContext.HttpContext.Session.GetString("CntryId");
+    string? BrchId = ViewContext.HttpContext.Session.GetString("BrchId");
+    string? RoleId = ViewContext.HttpContext.Session.GetString("RoleId");
+    DateTime currentDate = DateTime.Now;
+    string formattedDate = currentDate.ToString("dd-MM-yyyy");
+}
+
+
+<div class="col-xl-12 col-md-12">
+    <div class="card table-card p-2 mb-0">
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn text-center btn-sm btn-primary btn_first p-2" title="Get First Document" style="width:50px; font-size:18px;">
+                    <i class="fa fa-arrow-circle-o-left"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary btn_backward p-2" title="Get Previous Record" style="width:50px; font-size:18px;">
+                    <i class="fas fa-long-arrow-alt-left"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary p-2 btn_forward" title="Get Next Record" style="width:50px; font-size:18px;">
+                    <i class="fas fa-long-arrow-alt-right"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary btn_last p-2" title="Get Last Document" style="width:50px; font-size:18px;">
+                    <i class="fa fa-arrow-circle-o-right"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary btn_reload p-2" title="Reload" style="width:50px; font-size:18px;">
+                    <i class="fa fa-refresh"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card table-card mt-2">
+        <div class="card-header">
+            <h5 class="webtitle">Inventory Counting</h5>
+            <div class="card-header-right">
+                <ul class="list-unstyled card-option">
+                    <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                    <li><i class="fa fa-window-maximize full-card"></i></li>
+                    <li><i class="fa fa-minus minimize-card"></i></li>
+                    <li><i class="fa fa-refresh reload-card"></i></li>
+                    <li hidden><i class="fa fa-trash close-card"></i></li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="card-block shadow">
+            <!-- Row start -->
+            <form id="Header_Form">
+                <div class="row p-2">
+                    <div class="col-md-12 col-lg-12 col-xl-12 ">
+                        <div class="row   mt-1 mb-3 ">
+                            <div class="col-md-12  col-lg-12 col-xl-12">
+                                <div class="row">
+                                    <div class="col-md-12 col-lg-8 col-xl-8  mt-1 mb-1">
+                                        <div class="col-auto">
+                                            <label class="switch">
+                                                <input type="checkbox" value="Y" checked name="IsActive" id="IsActive" class="toggleSwitch form-control form-control-sm">
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-4  col-xl-2  text-center mt-1 mb-1">
+                                        <div class="dropdown d-none" id="specificDropdown">
+                                            <button class="btn btn-sm btn-outline-secondary w-100  dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                                Copy From
+                                            </button>
+                                            <div class="dropdown-menu w-100">
+                                                <span data-value="GDR" class="dropdown-item  CopyDrop">Goods Receipt</span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-4 col-xl-2 text-center mt-1  mb-1">
+                                        <div class="dropdown   ">
+                                            <button class="btn btn-sm btn-outline-secondary w-100  dropdown-toggle" id="CopyTo" type="button" data-toggle="dropdown" aria-expanded="false" disabled>
+                                                Copy To
+                                            </button>
+                                            <div class="dropdown-menu w-100">
+                                                <a data-value="IC" class="dropdown-item CopyToDrop" href="@Url.Action("InventoryPosting","InventoryPosting")">Inventory Posting</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row mt-1 mb-0 p-1">
+                            <div class="col-md-12  col-lg-12 col-xl-12">
+                                <div class="row">
+                                    <input hidden name="InvCountId" id="InvCountId" value="" type="text" placeholder="InvCountId" class="form-control form-control-sm Form_Elem" />
+                                    <div class="col-md-3  mt-1 mb-1">
+                                        <label for="">Number</label>
+                                        <input name="DocNum" id="DocNum" oninput="MaxLengthInp(this,10)" type="number" readonly placeholder="Number" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-3  mt-1 mb-1">
+                                        <label for="CountDate">Count Date</label>
+                                        <input name="CountDate" id="CountDate" type="date" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-3  mt-1 mb-1">
+                                        <label for="CountTime">Count Time</label>
+                                        <input name="CountTime" id="CountTime" readonly type="datetime" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                   
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="InvCounterType">Inventory Counter</label>
+                                        <select id="InvCounterType" name="InvCounterType" class="form-control form-control-sm  Form_Elem">
+                                            <option value="">Select Type</option>
+                                            <option value="U">User</option>
+                                            <option value="E">Employee</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1" >
+                                        <label for="Role">Role</label>
+                                        <select id="Role" name="Role" class="form-control form-control-sm  Form_Elem">
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="FinyrId">Financial year</label>
+                                        <select id="FinyrId" name="FinyrId" class="form-control form-control-sm  Form_Elem">
+                                            <option value="">Manual</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3  mt-1 mb-1">
+                                        <label for="FinyrNum">No</label>
+                                        <input name="FinyrNum" id="FinyrNum" readonly oninput="MaxLengthInp(this,100)" type="number" placeholder="No" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="Status">Status</label>
+                                        <select readonly disabled id="Status" name="Status" class="form-control form-control-sm  Form_Elem">
+                                            <option value="O">Open</option>
+                                            <option value="C">Close</option>
+                                            <option value="N">Cancelled</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3  mt-1 mb-1">
+                                        <label for="EOFiscalYearDt">End of Fiscal Date</label>
+                                        <input name="EOFiscalYearDt" id="EOFiscalYearDt" type="date" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-3  mt-1 mb-1">
+                                        <label for="">Ref Text</label>
+                                        <input name="RefText" id="RefText" oninput="MaxLengthInp(this,15)" type="text" placeholder="RefText" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-6 mt-1 mb-1">
+                                        <label for="Remark" oninput="MaxLengthInp(this,200)">Remark</label>
+                                        <textarea name="Remarks" id="Remarks" class="form-control form-control-sm Form_Elem"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-12 col-xl-12 mt-2 ">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs  tabs" role="tablist">
+                        <li class="nav-item active">
+                            <a class="nav-link active" data-toggle="tab" id="Contents_Tab" href="#Contents" role="tab">Contents</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#Attachment" role="tab">Attachment</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#AllItems" role="tab">All Inventory Count List</a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content tabs card-block">
+                        <div class="tab-pane p-1 active " id="Contents" role="tabpanel">
+                            <div id="Contents_mst_form" class="w-100 mt-2 p-2">
+                                <div class="row border">
+                                    <div class="col-md-12  p-2 ">
+                                        <div class="row mt-0 mb-1">
+                                            <div class="col-md-12 text-right">
+                                                <button type="button" id="AddCpd" class="btn btn-sm btn-primary">Add Row</button>
+                                            </div>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped   table-hover table-bordered w-100" cellspacing="0" cellpadding="0" border="1" id="Table1">
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="tab-pane p-3 m-0 mt-2" id="Attachment" role="tabpanel">
+                            <div class="row  p-3  mt-2 border">
+                                <div class="col-md-12 text-right table-responsive mt-3">
+                                    <button type="button" id="Addrow" class="btn btn-primary btn-sm mb-2">Add New Row</button>
+                                </div>
+                                <div class="col-md-12  table-responsive mt-3" style="height:300px!important;">
+                                    <table class="table border  table-striped   table-hover table-bordered w-100" id="AttachmentTable">
+                                        <thead>
+                                            <tr>
+                                                <th class="p-2" nowrap>Sr.No</th>
+                                                <th class="p-2" nowrap>Add/Update</th>
+                                                <th class="p-2" nowrap>Remark</th>
+                                                <th class="p-2" nowrap>File Name</th>
+                                                <th class="p-2" nowrap>File Extention</th>
+                                                <th class="p-2 d-none" nowrap>File Data</th>
+                                                <th class="p-2 d-none" nowrap>AttchDetId</th>
+                                                <th class="p-2 d-none" nowrap>Flag</th>
+                                                <th class="p-2 text-center" nowrap>View</th>
+                                                <th class="p-2 text-center" nowrap>Delete</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane p-3 w-100" id="AllItems" role="tabpanel">
+                            <div class="row p-3  mt-2 border">
+                                <div class="table-responsive">
+                                    <table class="table border  table-striped   table-hover table-bordered w-100" id="Table">
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mt-1 mb-1 d-none">
+                                <label for="CreatedBy">Created By</label>
+                                <input name="CreatedBy" id="CreatedBy" readonly type="text" value="@UserName" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                            </div>
+                            <div class="col-md-4 mt-1 mb-1 d-none">
+                                <label for="UpdatedBy">Updated By</label>
+                                <input name="UpdatedBy" id="UpdatedBy" readonly type="text" value="@UserName" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                            </div>
+                            <div class="col-md-4 mt-1 mb-1 d-none">
+                                <label for="CreateDate">Create Date</label>
+                                <input name="CreateDate" id="CreateDate" readonly type="text" value="@formattedDate" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                            </div>
+                            <div class="col-md-4 mt-1 mb-1 d-none">
+                                <label for="UpdateDate">Update Date</label>
+                                <input name="UpdateDate" id="UpdateDate" readonly type="text" value="@formattedDate" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 mt-3">
+                                <br>
+                                <button type="button" id="Form_Update_btn" style="display:none; width:80px;" class="btn mt-1 mb-1 ml-1 mr-1 btn-sm text-white btn-info">Update</button>
+                                <button type="button" id="Form_Save_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm mt-1 mb-1 btn-success">Save</button>
+                                @*<button type="button" id="Form_Draft_btn" style=" width:80px; background-color:darkgrey" class="btn ml-1 mt-1 mb-1 mr-1 btn-sm text-white">Draft</button>*@
+                                <button type="button" id="Form_Delete_btn" style="display:none; width:80px;" class="btn mt-1 mb-1 ml-1 mr-1 btn-sm btn-danger">Delete</button>
+                                @*<button type="button" id="Form_Resume_btn" style=" width:80px; background-color:orange" class="btn ml-1 mt-1 mb-1 mr-1 btn-sm text-white">Resume</button>*@
+                                <button type="reset" id="Form_reset_btn" style=" width:80px;" class="btn ml-1 mr-1 mt-1 mb-1 btn-sm btn-dark">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- Row end -->
+    </div>
+</div>
+<!-- Image Modal-->
+<div class="modal" id="DocumentViewer">
+    <div class="modal-content" style="height: 90vh; margin-top: 5vh;">
+        <div class="card-header bg-white border-0">
+            <a class="downloadLink " style="display: none;"><button type="button" class="btn  btn-primary p-1">Download Document</button> </a>
+            <span class="close closeModal" id="">&times;</span>
+        </div>
+        <div class="card-body viewerbody border p-2 text-center" style="overflow-y:scroll!important;overflow-x:scroll">
+            <div class="table-responsive pdfdocument-viewer w-100">
+            </div>
+            <div class=" image-container document-viewer document-viewer"></div>
+        </div>
+    </div>
+</div>
+<!-- COPY FROM MODAL -->
+<div class="modal" id="CopyFromModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Copy From</h5>
+            <span class="close closeModalInstallments" id="">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="card-body border">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped   table-hover table-bordered w-100" cellspacing="0" cellpadding="0" border="1" id="Table4">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        
+
+        var ItemDropdown, ItemNameDropdown, ServiceDropdown, CustomerDropdown, TaxDataDropdown, UOMDropdown, CurrencyDropdown, WarehouseDropdown, BranchDropdown, AggrimentDropdown;
+        function Loader() {
+        $(".Loader1").toggleClass('d-none');
+
+        }
+        //SET Default Date
+        {
+            var DraftFlag = "";
+            DefaultDate();
+            function DefaultDate() {
+                var date = new Date();
+                var formattedDate = date.toISOString().split('T')[0];
+                $("#EOFiscalYearDt").val(formattedDate);
+                $("#CountDate").val(formattedDate);
+            }
+
+        }
+        //Add Attchmement and View Row
+        {
+            $('#Form_Resume_btn').click(function () {
+                $('#DraftModal').modal('show');
+            });
+            $('.close').click(function () {
+                $('#DraftModal').modal('hide');
+            });
+            //Region Attachment
+            $("#Addrow").click(function () {
+                var Index = $("#AttachmentTable tbody tr").length;
+                var list = "<tr>";
+                list += "<td>" + parseInt(Index + 1) + "</td>"; // Add the index to the first column
+                list += "<td class='p-0' nowrap><input class='p-1 form-control form-control-sm selectfile' type='file' placeholder='Choose File'/></td>";
+                list += "<td class='p-0 align-items-center Remark' nowrap><textarea style='height:34px!important;' class='form-control form-control-sm'></textarea></td>";
+                list += "<td class=' align-items-center filename' nowrap></td>";
+                list += "<td class=' align-items-center fileExt' nowrap></td>";
+                list += "<td class=' align-items-center d-none fileData' nowrap></td>";
+                list += "<td class=' align-items-center d-none attachId' nowrap></td>";
+                list += "<td class='text-center p-0' nowrap><button style='width:100px;' type='button' class='btn p-1 mt-1 mb-1 ViewAttchment btn-sm btn-primary'>View</button></td>";
+                list += "<td class='text-center p-0' nowrap><button style='width:100px;' type='button' class='btn p-1 mt-1 mb-1 DeleteAttchment btn-sm btn-danger'>Delete</button></td>";
+                list += "</tr>";
+                $("#AttachmentTable tbody").append(list);
+            });
+            $(document).on("change", ".selectfile", function () {
+                var tableRow = $(this).closest('tr');
+                var fileInput = $(this)[0];
+                if (fileInput.files.length > 0) {
+                    var file = fileInput.files[0];
+                    var fileName = file.name;
+                    var fileExt = fileName.split('.').pop().toLowerCase();
+                    tableRow.find(".filename").text(fileName); // Display file name
+                    tableRow.find(".fileExt").text(fileExt);
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var fileData = e.target.result;
+                        tableRow.find(".fileData").text(fileData); // Display file data or handle it as needed
+                    };
+                    if (fileExt === 'xls' || fileExt === 'xlsx' || fileExt === 'csv') {
+                        reader.readAsBinaryString(file);
+                    } else {
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+            $(document).on("click", ".ViewAttchment", function () {
+                var tableRow = $(this).closest('tr');
+                var fileData = tableRow.find(".fileData").text();
+                var fileExt = tableRow.find(".fileExt").text();
+                var filename = tableRow.find(".filename").text();
+                $('.document-viewer').html("");
+                $('.pdfdocument-viewer').html("");
+                if (fileExt === 'xls' || fileExt === 'xlsx') {
+                    var workbook = XLSX.read(fileData, { type: 'binary' });
+                    var sheetName = workbook.SheetNames[0];
+                    var excelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+                    var tableHtml = '<table class="table table-bordered table-striped   table-hover table-bordered w-100" border="1px">';
+                    for (var i = 0; i < excelData.length; i++) {
+                        tableHtml += '<tr>';
+                        for (var j = 0; j < excelData[i].length; j++) {
+                            var cellValue = excelData[i][j];
+                            var colspan = 1;
+                            while (j + colspan < excelData[i].length && excelData[i][j + colspan] === cellValue) {
+                                colspan++;
+                            }
+                            if (colspan > 1) {
+                                tableHtml += '<td colspan="' + colspan + '">' + cellValue + '</td>';
+                                j += colspan - 1;
+                            } else {
+                                tableHtml += '<td>' + cellValue + '</td>';
+                            }
+                        }
+
+                        tableHtml += '</tr>';
+                    }
+                    tableHtml += '</table>';
+                    $(".document-viewer").html(tableHtml);
+                    // Show download link
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,' + btoa(fileData));
+                    downloadLink.attr('download', filename);
+                    downloadLink.show();
+                } else if (fileExt === 'csv') {
+                    // Render CSV file as HTML table
+                    var csvData = Papa.parse(fileData, { header: true, skipEmptyLines: true });
+                    var tableHtml = '<table class="table table-bordered table-striped   table-hover table-bordered w-100">';
+                    csvData.data.forEach(function (row) {
+                        tableHtml += '<tr>';
+                        for (var key in row) {
+                            tableHtml += '<td>' + row[key] + '</td>';
+                        }
+                        tableHtml += '</tr>';
+                    });
+                    tableHtml += '</table>';
+
+                    $(".document-viewer").html(tableHtml);
+
+                    // Show download link
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', 'data:text/csv;base64,' + btoa(fileData));
+                    downloadLink.attr('download', filename);
+                    downloadLink.show();
+                } else if (fileExt === 'pdf') {
+                    renderPdf(fileData);
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', 'data:application/pdf;base64,' + btoa(fileData));
+                    downloadLink.attr('download', filename);
+                    downloadLink.show();
+                } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExt)) {
+                    var imageHtml = '<img src="' + fileData + '" />';
+                    $(".document-viewer").html(imageHtml);
+                    // Show download link
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', fileData);
+                    downloadLink.attr('download', filename);
+                    downloadLink.show();
+                }
+                else {
+                }
+                $("#DocumentViewer").fadeIn();
+            });
+            function renderPdf(pdfData) {
+                if (pdfData) {
+                    const objectElement = $('<object>');
+                    objectElement.attr('data', pdfData);
+                    objectElement.attr('type', 'application/pdf');
+                    objectElement.css('width', '100%');
+                    objectElement.css('height', '700px');
+                    $('.pdfdocument-viewer').html(objectElement);
+                } else {
+                    $('.pdfdocument-viewer').text('No Data Found!');
+                }
+            }
+        }
+        //Get Dropdown
+        {
+            var ItemData = [];
+            var TaxData1 = [];
+            var WarehouseData = [];
+            var CustomerData = [];
+            var UOMCODEData = [];
+            var SERVICECODEData = [];
+            var Branchdata = [];
+            var CurrencyData = [];
+            updateTime();
+          
+            //Get Item
+            $.ajax({
+                url: '@Url.Action("ITEM", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        ItemData = response;
+                        ItemDropdown = `<select data-value="A" style='width:200px' class="form-control ItemId select21 form-control-sm Form_Elem">
+                                                                     <option value="">Select Item</option> ${ItemData.map(item => `<option value="${item.ItemId}">${item.ItemCode}</option>`).join('')}</select>`;
+                        ItemNameDropdown = `<select data-value="A" style='width:200px' class="form-control ItemName select21 form-control-sm Form_Elem">
+                                                                         <option value="">Select Item</option> ${ItemData.map(item => `<option value="${item.ItemId}">${item.ItemName}</option>`).join('')}</select>`;
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+
+            // //Get Price List
+            $.ajax({
+                url: '@Url.Action("PriceList", "InventoryCounting")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    let list = "<option value=''>Select Price List </option>";
+                    for (var i = 0; i < response.length; i++) {
+                        list += "<option value='" + response[i].PListId + "'>" + response[i].PListName + "</option>";
+                    }
+                    $("#PListId").html(list);
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                    console.error('Error:', error.responseText);
+                }
+            });
+           
+            //GET WAREHOUSE
+            $.ajax({
+                url: '@Url.Action("WAREHOUSE", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    WarehouseData = response;
+                    WarehouseDropdown = `<select style='width:160px' class="form-control  WhsId form-control-sm Form_Elem">
+                                        <option value="">Select Warehouse</option> ${WarehouseData.map(item => `<option value="${item.WhsId}">${item.WhsName}</option>`).join('')} </select>`;
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+            //Get UOMCODE
+            $.ajax({
+                url: '@Url.Action("UOMCODE", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        UOMCODEData = response;
+                        UOMDropdown = `<select style='width:140px' class="form-control  select21 UomId form-control-sm Form_Elem">
+                                                                                                        <option value="">Select UOM</option> ${UOMCODEData.map(item => `<option value="${item.UomId}">${item.UomCode}</option>`).join('')} </select>`;
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+            // get finacial year
+            var FyData;
+            $.ajax({
+                url: '@Url.Action("FINACIALY", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        FyData = response;
+                        let list = "<option value=''>Select Financial Year</option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].FinyrId + "'>" + response[i].Finyr + "</option>";
+                        }
+                        $("#FinyrId").html(list);
+
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+            // Event FinyrId Change
+            $("#FinyrId").change(function () {
+                var Id = $(this).val();
+                if (Id == "") {
+                    $("#FinyrNum").prop('readonly', true).val("");
+                    return false;
+                }
+                for (var i = 0; i < FyData.length; i++) {
+                    if (Id == FyData[i].FinyrId) {
+                        if (FyData[i].Finyr.trim() == "Manual") {
+                            $("#FinyrNum").prop('readonly', false).val(FyData[i].FinyrStNum);
+                        } else {
+                            $("#FinyrNum").prop('readonly', true).val(FyData[i].FinyrStNum);
+                        }
+                        return; // Exit the loop once a match is found
+                    }
+                }
+            });
+            // GET Branch
+            $("#BrchId").change(function () {
+                var ID = $(this).val();
+                var requester = Branchdata.find(item => item.BrchId == ID);
+                if (requester) {
+                    $("#BrchGSTINNo").val(requester.BrchGSTINNo);
+                } else {
+                    $("#BrchGSTINNo").val("");
+                }
+            })
+            $("#InvCounterType").change(function (event, rowObject) {
+                var Val = $(this).val();
+                if (Val == "U") {
+                    // Get User
+                    $.ajax({
+                        url: '@Url.Action("USERS", "GetDropdownData")',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (response) {
+                            let list = "<option value=''>Select User </option>";
+                            for (var i = 0; i < response.length; i++) {
+                                list += "<option value='" + response[i].UserId + "'>" + response[i].UserFname + " " + response[i].UserLname + "</option>";
+                            }
+                            $("#Role").html(list);
+                            // Set the value based on rowObject if it's defined
+                            if (rowObject) {
+                                $("#Role").val(rowObject.UserId).trigger("change");
+                            }
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                } else {
+                    // Get Employee
+                    $.ajax({
+                        url: '@Url.Action("EMPLOYEE", "GetDropdownData")',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (response) {
+                            let list = "<option value=''>Select Employee </option>";
+                            for (var i = 0; i < response.length; i++) {
+                                list += "<option value='" + response[i].EmpId + "'>" + response[i].EmpFname + " " + response[i].EmpLname + "</option>";
+                            }
+                            $("#Role").html(list);
+                            // Set the value based on rowObject if it's defined
+                            if (rowObject) {
+                                $("#Role").val(rowObject.EmpId).trigger("change");
+                            }
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                }
+            });
+
+            // Get  SALESEMPLOYEE
+            $.ajax({
+                url: '@Url.Action("SALESEMPLOYEE", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    let list = "<option value=''>Select Sales Employee </option>";
+                    for (var i = 0; i < response.length; i++) {
+                        list += "<option value='" + response[i].SalsEmpId + "'>" + response[i].SalsEmpName + "</option>";
+                    }
+                    $("#SalsEmpId").html(list);
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                    console.error('Error:', error.responseText);
+                }
+            });
+            // Get  Location
+            $.ajax({
+                url: '@Url.Action("LOCATION", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    let list = "<option value=''>Select Location </option>";
+                    for (var i = 0; i < response.length; i++) {
+                        list += "<option value='" + response[i].LocId + "'>" + response[i].LocName + "</option>";
+
+                    }
+                    $("#LocId").html(list);
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                    console.error('Error:', error.responseText);
+                }
+            });
+            //Get Department
+            $.ajax({
+                url: '@Url.Action("DEPARTMENT", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    let list = "<option value=''>Select Department </option>";
+                    for (var i = 0; i < response.length; i++) {
+                        list += "<option value='" + response[i].DeptId + "'>" + response[i].DeptName + "</option>";
+                    }
+                    $("#DeptId").html(list);
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                    console.error('Error:', error.responseText);
+                }
+            });
+            //Shiping Type
+            $.ajax({
+                url: '@Url.Action("SHIPINGTYPE", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "<option value=''>Select Shipping Type </option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].ShipTypeId + "'>" + response[i].ShipTypeName + "</option>";
+                        }
+                        $("#ShipTypeId").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+        }
+        //Event Input
+        {
+
+            $(document).on("change", ".BarCodeInp", function () {
+                var BarcodeEANType = "12";
+                var currentval = $(this).val();
+                var $row = $(this).closest("tr");
+                var BarCode = CreateBarcode(currentval, BarcodeEANType);
+                $(this).val(BarCode);
+
+                $.ajax({
+                    url: '@Url.Action("GETBARCODEID", "GetDropdownData")',
+                    type: 'GET',
+                    data: { "Barcode": BarCode },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.length > 0) {
+                            var itemId = response[0].ItemId;
+                            $row.find('.Tbl_ItemName select').val(itemId).trigger("change");
+
+                            // Make the second AJAX call with the ItemId from the first response
+                            $.ajax({
+                                url: '@Url.Action("UOMCODES", "GetDropdownData")',
+                                type: 'GET',
+                                dataType: 'json',
+                                data: { "ItemId": itemId },
+                                success: function (uomResponse) {
+                                    var Tablelength = $("#Table1 tbody tr").length;
+                                    var Selectedvalue = Tablelength >= 2 ? $("#Table1 tbody tr").eq(0).find(".Tbl_UomId select").val() : "";
+
+                                    var Options = `<option value="">Select UOM</option>
+                                ${uomResponse.map(uom => `<option value="${uom.UomId}" ${uom.UomId == Selectedvalue ? 'selected' : ''}>${uom.UomName}</option>`).join('')}`;
+                                    $row.find(".Tbl_UomId select").html(Options).val(response[0].PurUOM);
+                                },
+                                error: function (error) {
+                                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                                    console.error('Error:', error.responseText);
+                                }
+                            });
+
+                        } else {
+                            $(this).val("");
+                            swal.fire("Item Not Found", "Please Check Barcode...!", "warning");
+                        }
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        console.error('Error:', error.responseText);
+                    }
+                });
+            });
+
+
+
+            function CreateBarcode(IncrementCount, EANType1) {
+                const EANType = parseInt(EANType1);
+                let Barcode = "";
+                let IncrementCountlength = IncrementCount.length;
+                var Val1 = EANType  - IncrementCountlength;
+                for (i = 0; i < Val1; i++) {
+                    Barcode += "0";
+                }
+                Barcode += IncrementCount;
+                if (Barcode.length == EANType) {
+                    return Barcode;
+                } else {
+                    notify("PLese Check Out Your Prifix Values Or Initial Count ", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    return false;
+                }
+            }
+            // Item Name Change
+            $(document).on("change", ".ItemName", function () {
+                var $row = $(this).closest("tr");
+                var itemId = $(this).val();
+                // callPriceList($row, itemId);
+                var data = $(this).data('value');
+                if (data == "A") {
+                    $row.find('.Tbl_ItemId select').data("value", "M"); // Update data attribute value
+                    $row.find('.Tbl_ItemId select').val(itemId).trigger("change");
+                    $row.find(".Tbl_ItemId select").next('.select2-container').removeClass("select2-error");
+                    LoadWhs(itemId, $row)
+                    GetBarcode(itemId, $row)
+                }
+                $(this).data("value", "A"); // Update data attribute value for ItemName
+            });
+            // Item Id Change
+            $(document).on("change", ".ItemId", function () {
+                var $row = $(this).closest("tr");
+                var itemId = $(this).val();
+                //  callPriceList($row, itemId);
+                var data = $(this).data('value');
+                if (data == "A") {
+                    $row.find('.Tbl_ItemName select').data("value", "M"); // Update data attribute value
+                    $row.find('.Tbl_ItemName select').val(itemId).trigger("change");
+                    $row.find(".Tbl_ItemId select").next('.select2-container').removeClass("select2-error");
+                    ItemChange($row, itemId);
+                    LoadWhs(itemId, $row)
+                    GetBarcode(itemId, $row)
+                }
+                $(this).data("value", "A"); // Update data attribute value for ItemId
+            });
+            // Load Warehouse
+            function LoadWhs(ItemId, $row) {
+                $.ajax({
+                    url: '@Url.Action("WAREHOUSEVIAITEM", "GetDropdownData")',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: { "ItemCode": ItemId },
+                    success: function (response) {
+                        var Options = `<option value="">Select Warehouse</option>
+                               ${response.map(item => `<option value="${item.WhsId}">${item.WhsName}</option>`).join('')}`;
+                        $row.find(".Tbl_WhsId select").html(Options);
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        console.error('Error:', error.responseText);
+                    }
+                });
+            }
+            // Get Barcode 
+            function GetBarcode(ItemId, $row) {
+                $.ajax({
+                    url: '@Url.Action("GETBARCODENAME", "GetDropdownData")',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: { "ItemId": ItemId },
+                    success: function (response) {
+                       if(response.length >0){
+                        $row.find('.Tbl_BarCode input').val(response[0].BarCode);
+                       }else{
+                        $row.find('.Tbl_BarCode input').val("");
+                       }
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        console.error('Error:', error.responseText);
+                    }
+                });
+            }
+            //Item Id Change
+            function ItemChange($row, itemId) {
+                $row.find('.Tbl_UomId select').val("").trigger("change");
+                $row.find('.Tbl_CntryId select').val("").trigger("change");
+                $row.find('.Tbl_IPrice input').val(0.00);
+                $row.find('.Tbl_Qty input').val();
+                // Find the item in ItemData array
+                var item = ItemData.find(item => item.ItemId == itemId);
+                if (item) {
+                    // Populate and select the UOM
+                    $.ajax({
+                        url: '@Url.Action("UOMCODES", "GetDropdownData")',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: { "ItemId": itemId },
+                        success: function (response) {
+                            var Tablelength = $("#Table1 tbody tr").length;
+                            var Selectedvalue = Tablelength >= 2 ? $("#Table1 tbody tr").eq(0).find(".Tbl_UomId select").val() : "";
+
+                            var Options = `<option value="">Select UOM</option>
+                        ${response.map(uom => `<option value="${uom.UomId}" ${uom.UomId == Selectedvalue ? 'selected' : ''}>${uom.UomName}</option>`).join('')}`;
+                            $row.find(".Tbl_UomId select").html(Options).val(item.PurUOM);
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                    $row.find('.Tbl_UomId select').val(item.PurUOM).trigger("change");
+                    $row.find('.Tbl_CntryId select').val(item.CntryId).trigger("change");
+                    $row.find('.Tbl_Qty input').val();
+                    var priceListId = item.PListId;
+                    $.ajax({
+                        url: '@Url.Action("GETPRICE", "InventoryCounting")',
+                        type: 'GET',
+                        data: { Itemid: itemId, Pricelistid: priceListId },
+                        dataType: 'json',
+                        success: function (response) {
+                            var basePrice = response.length > 0 ? parseFloat(response[0].Price).toFixed(2) : "0.00";
+                            $row.find('.Tbl_ActualPrice').text(basePrice);
+                        },
+                        error: function (xhr, status, error) {
+                            console.log("AJAX Error:", status, error);
+                            handleError(xhr.responseText);
+                        }
+                    });
+                }
+            }
+            function handleError(error) {
+                notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                console.error('Error:', error.responseText);
+            }
+
+            //GET Prcilist throgh whole data
+            function callPriceList($row, itemId) {
+                var Pricelistid = $('#PListId').val();
+                $.ajax({
+                    url: '@Url.Action("GETPRICEDATA", "InventoryCounting")',
+                    type: 'GET',
+                    data: { Pricelistid: Pricelistid },
+                    dataType: 'json',
+                    success: function (response) {
+                        for (var i = 0; i < response.length; i++) {
+                            var PListId = response[i].PListId;
+                            var ItemIdBypricelist = response[i].ItemId;
+                            var ItemIdByPrice = response[i].Price;
+                            if (itemId == ItemIdBypricelist) {
+                                $row.find('.Tbl_IPrice input').val(ItemIdByPrice);
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("AJAX Error:", status, error);
+                        handleError(xhr.responseText);
+                    }
+                });
+            }
+            //Warehose Change
+            {
+
+                $(document).on("change", ".WhsId", function () {
+                    var $row = $(this).closest("tr");
+                    var Id = $(this).val();
+                    var ItemId = $row.find('.Tbl_ItemId select').val();
+                    if (Id == "" || Id == null || Id == undefined) {
+                        $row.find('.Tbl_ItemBrchId select').val("").trigger("change");
+                        $row.find('.Tbl_LocName').text("");
+                        $row.find('.Tbl_WhsQty_Input').val(""); // Clear the quantity field
+                        return false;
+                    }
+                    var data = WarehouseData.find(item => item.WhsId == Id);
+                    if (data) {
+                        var BrchId = data.BrchId;
+                        var LocName = data.WhsAddr;
+                        $row.find('.Tbl_ItemBrchId select').val(BrchId).trigger("change");
+                        $row.find('.Tbl_LocName').text(LocName);
+
+                        // Call LoadWhsQty to fetch and update the quantity
+                       LoadWhsQty(ItemId, Id, $row);
+                    }
+                });
+
+                function LoadWhsQty(ItemId, WhsId, $row) {
+                    $.ajax({
+                        url: '@Url.Action("WAREHOUSEQTY", "GetDropdownData")',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: { "ItemId": ItemId, "WhsId": WhsId },
+                        success: function (response) {
+                            if (response.length > 0 && response[0].WhsQty !== undefined) {
+                                $row.find(".Tbl_WhsQty_Input").val(response[0].WhsQty);
+                            } else {
+                                console.log("Response does not contain WhsQty or it's undefined:", response);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("AJAX error:", status, error);
+                        }
+                    });
+                }
+
+
+            }
+        }
+        //Region Add Details
+        {
+            $("#AddCpd").click(function () {
+                var row = "";
+                var tablelength = $("#Table1 tbody tr").length;
+                if (tablelength > 0) {
+                    var Lastrow = $("#Table1 tbody tr:last"),
+                        Closet = Lastrow.closest("tr"),
+                        Number = $("#DocNum").val(),
+                        ItemId = Closet.find(".Tbl_ItemId select").val(),
+                        WhsId = Closet.find(".Tbl_WhsId select").val(),
+                        Location = Closet.find(".Tbl_LocName").text();
+                    if (Number === "") {
+                        Swal.fire("Please Fill Doc Number..!", "", "warning");
+                        $("#DocNum").addClass("border-danger");
+                        return false;
+                    } else {
+                        $("#DocNum").removeClass("border-danger");
+                    }
+                    if (ItemId === "") {
+                            Swal.fire("Please Select Item In Last Row", "", "warning");
+                        Closet.find(".Tbl_ItemId select").next('.select2-container').addClass("select2-error");
+                        return false;
+                    }
+                   else if (WhsId === "") {
+                        Swal.fire("Please Add Warehouse In Last Row", "", "warning");
+                        Closet.find(".Tbl_WhsId select").addClass("border-danger");
+                        return false;
+                   }else {
+                        Closet.find(".Tbl_WhsId select").removeClass("border-danger");
+                        Closet.find(".Tbl_ItemId select").next('.select2-container').removeClass("select2-error");
+                        var ItemHide = "";
+                        var ServeiceHide = "";
+                        row += "<tr>";
+                        row += "<td>" + parseInt(tablelength + 1) + "</td>";
+                        row += `<td><i class="fa fa-edit CPDtable_edit text-primary mr-1"></i> <i class="fa fa-trash text-danger mr-2 CPDtable_delete"></i></td>`;
+                        row += `<td class='text-center Tbl_BarCode ${ItemHide}'>0</td>`;
+                        row += "<td class='d-none text-center Tbl_LineNum'></td>";
+                        row += "<td class='d-none text-center tbl_Main_ID'></td>";
+                        row += "<td class='d-none text-center Tbl_InvCountId'>" + $("#InvCountId").val() + "</td>";
+                        row += `<td class='text-center Tbl_ItemId ${ItemHide}'></td>`;
+                        row += `<td class='text-center Tbl_ItemName ${ItemHide}'></td>`;
+                        row += `<td class='text-center Tbl_WhsId ${ItemHide} text-center'>${WhsId}</td>`;
+                        row += `<td class='text-center Tbl_WhsQty ${ItemHide}'>0</td>`;
+                        row += `<td class='text-center Tbl_Counted'>N</td>`;
+                        row += `<td class='text-center Tbl_CountedQty'>0.00</td>`;
+                        row += `<td class='text-center Tbl_UomId ${ItemHide} text-center'></td>`;
+                        row += "<td class='text-center Tbl_Diff'>0</td>";
+                        row += `<td class='text-center Tbl_Freeze'>N</td>`;
+                        row += "</tr>";
+                        var dataTable = $('#Table1').DataTable();
+                        var newRow = $(row).appendTo('#Table1 tbody');
+                        dataTable.row.add(newRow).draw(false);
+                        $('.select21').css({ width: "width:120px", backgroundColor: "white" }).select2();
+                    }
+                }
+            });
+        }
+        //Region Select Row Data
+        {
+            $(document).on("click", ".table_edit", function () {
+                var $row = $(this).closest("tr");
+                $row.addClass("active");
+                BindHederRecords($row, "N")
+                DraftFlag = "N";
+            })
+            $(document).on("click", ".table_edit1", function () {
+                var $row = $(this).closest("tr");
+                DraftFlag = "Y"
+                BindHederRecords($row, "Y")
+            })
+            $(document).on("click", ".Duplicate", function () {
+                var $row = $(this).closest("tr");
+                DraftFlag = "D"
+                BindHederRecords($row, "D")
+            })
+
+            function BindHederRecords(Row, Flag) {
+
+                var $row = Row;
+                var rowObject = {};
+                $row.find('td').each(function (index) {
+                    var $td = $(this);
+                    var key = $td.closest('table').find('th').eq(index).text().trim().replace(/[.,()%\- ]/g, '');
+                    if ($td.find('input').length) {
+                        rowObject[key] = $td.find('input').val();
+                    }
+                    else if ($td.find('textarea').length) {
+                        rowObject[key] = $td.find('textarea').val();
+                    }
+                    else if ($td.find('img').length) {
+                        rowObject[key] = $td.find('img').attr("src");
+                    } else if ($td.find('select').length) {
+                        //  rowObject[key] = $td.find('select option:selected').text().trim();
+                        //  rowObject['TaxCodeval'] = $td.closest('tr').find('.Taxc option:selected').val();
+                        //  rowObject['UomEntryVal'] = $td.closest('tr').find('.Uomc1 option:selected').val();
+                    } else {
+                        rowObject[key] = $td.text().trim();
+                    }
+                });
+              
+                $("#Addrow").removeAttr("disabled");
+                $(".OpBarcode").removeAttr("disabled");
+                if (Flag == "N" && Flag != "D") {
+                    $("#InvCountId").val(rowObject.InvCountId);
+                    ShowBtn()
+                    $("#CopyTo").prop("disabled", false);
+                    $("#Remarks").val(rowObject.Remark);
+
+                } else if (Flag == "D") {
+                    $("#CopyTo").prop("disabled", true);
+                } else {
+                    $("#InvCountId").val("");
+                    ShowBtn1();
+                    $("#CopyTo").prop("disabled", true);
+                }
+                $("#FinyrNum").val(rowObject.NumberNo);
+                $("#DocNum").val(rowObject.Number);
+                $("#JrnlMemo").val(rowObject.JrnlMemo);
+                $("#FinyrId").val(rowObject.FinyrId).trigger("change");
+                $("#InvCounterType").val(rowObject.InvCounterType).trigger("change", rowObject);
+               
+                $("#RefText").val(rowObject.ReferanceText);
+
+                LoadDetails(rowObject.InvCountId)
+                let FormatedDate = formatAndSetDate(rowObject.EndofFiscalYearDate);
+                $("#EOFiscalYearDt").val(FormatedDate);
+                FormatedDate = formatAndSetDate(rowObject.CountDate);
+                $("#CountDate").val(FormatedDate);
+        
+                LoadAttachmentData(rowObject.invCountId)
+                $("#Contents_Tab").click();
+            }
+        }
+        // setCurrentTime
+        {
+            setCurrentTime();
+            function setCurrentTime() {
+                var now = new Date();
+                var hours = now.getHours();
+                var minutes = now.getMinutes();
+                var period = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // the hour '0' should be '12'
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                var formattedTime = hours + ':' + minutes + ' ' + period;
+                $('#CountTime').val(formattedTime);
+            }
+           
+        }
+        // Save Region
+        {
+            $("#Form_Save_btn,#Form_Update_btn").click(function () {
+                AddRecords("N");
+            });
+            $("#Form_Draft_btn").click(function () {
+                AddRecords("Y");
+            });
+
+            function AddRecords(flag) {
+                var lastRowWhsId = $('#Table1 tbody tr:last .Tbl_WhsId select').val();
+                var lastRowUomId = $('#Table1 tbody tr:last .Tbl_UomId select').val();
+                if (!lastRowWhsId) {
+                    Swal.fire("Please select Item With Warehose in the last row..!", "", "warning");
+                    return false;
+                }
+                if (!lastRowUomId) {
+                    Swal.fire("Please select UOM in the last row..!", "", "warning");
+                    return false;
+                }
+
+                let isValid = true;
+                let formData = {};
+                $("#Header_Form input, select, textarea").each(function () {
+                    var inputName = $(this).attr('name');
+                    var inputValue = $(this).val();
+
+                    var mandatoryfields = ["FinyrId", "Num", "Tbl_WhsQty", "EOFiscalYearDt", "StateId", "CountDate"];
+                    var inputElement = $("#" + inputName);
+                    var inputId = inputElement.attr('id');
+                    var labelText = $("label[for='" + inputId + "']").text();
+
+                    if (mandatoryfields.includes(inputName) && inputValue === "") {
+                        if (inputElement.hasClass("select2-hidden-accessible")) {
+                            inputElement.next('.select2-container').addClass("select2-error");
+                        } else {
+                            inputElement.addClass("border-danger");
+                        }
+                        isValid = false;
+                        notify("Please Fill " + labelText + " Details..!", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        return false;
+                    } else {
+                        if (inputElement.hasClass("select2-hidden-accessible")) {
+                            inputElement.next('.select2-container').removeClass("select2-error");
+                        } else {
+                            inputElement.removeClass("border-danger");
+                        }
+                    }
+
+                    if (inputName) {
+                        formData[inputName] = inputValue;
+                    }
+                });
+
+                // Convert CountTime to 24-hour format if needed
+                if (formData['CountTime']) {
+                    formData['CountTime'] = convertTo24HourFormat(formData['CountTime']);
+                }
+
+                // Log the formData to check if all fields are captured
+                if ($("#InvCounterType").val() == "U") {
+                    formData['UserId'] = $("#Role").val()
+                    formData['EmpId'] = "";
+                } else {
+                    formData['EmpId'] = $("#Role").val()
+                    formData['UserId'] = "";
+                }
+
+                // Call API
+                if (isValid && Object.keys(formData).length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("POSTUPDATE", "InventoryCounting")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: formData,
+                        success: function (response) {
+                            if (response && response.invCountId) {
+                                AddDetails(response.invCountId);
+                                AddAttachmentData("#AttachmentTable", response.InvPostId);
+                                notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight");
+                                LoadTableData();
+                                LoadDraftTableData();
+                                $("#Form_reset_btn").click();
+                            } else {
+                                console.error("Invalid response format or missing InvPostId.");
+                            }
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                } 
+            }
+        }
+        function convertTo24HourFormat(time) {
+            var hours = parseInt(time.substr(0, 2));
+            var minutes = time.substr(3, 2);
+            var ampm = time.substr(6, 2).toUpperCase();
+
+            if (ampm === "PM" && hours < 12) hours += 12;
+            if (ampm === "AM" && hours === 12) hours -= 12;
+
+            return (hours < 10 ? "0" : "") + hours + ":" + minutes + ":00";
+        
+        } 
+        //Region Delete
+        {
+            $("#Form_Delete_btn").click(function () {
+                Delete($("#InvCountId").val());
+            });
+
+            $(document).on("click", ".table_delete", function () {
+                var $row = $(this).closest("tr");
+                var id = $row.find('td.tbl_Main_ID').text();
+                Delete(id);
+            });
+
+            function Delete(ID) {
+                if ($('#Status').val() != "O") {
+                    swal.fire("Can't Delete Record ...!", "Document Is Closed.", "warning");
+                    return false;
+                } else {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'This Purchase Request Is Permanently Deleted from the system..!',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Delete',
+                        confirmButtonColor: 'red',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: '@Url.Action("DELETEMAINDATA", "InventoryCounting")',
+                                type: 'POST',
+                                dataType: 'json',
+                                data: { Id: ID },
+                                success: function (response) {
+                                    if (response.success) {
+                                        LoadTableData();
+                                        ResetForm();
+                                        notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight");
+                                        Swal.fire('Deleted!', 'Your Details Data has been deleted.', 'success');
+                                    } else {
+                                        notify("Error To Deleting Data", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                                    }
+                                },
+                                error: function (error) {
+                                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                                    console.error('Error:', error.responseText);
+                                }
+                            });
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            Swal.fire('Cancelled', 'Your action has been cancelled.', 'error');
+                        }
+                    });
+                }
+            }
+
+            $(document).on("click", ".DeleteAttchment", function () {
+                var tableRow = $(this).closest('tr');
+                var Id = tableRow.find(".attachId").text();
+                DELETEATTACHMENT(Id);
+            });
+
+            function DELETEATTACHMENT(ID) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This Attachment Details Is Permanently Deleted from the system..!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    confirmButtonColor: 'red',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("DELETEATTACHMENT", "InventoryCounting")',
+                            dataType: 'json',
+                            data: { Id: ID },
+                            success: function (response) {
+                                if (response.success) {
+                                    LoadAttachmentData($("#InvCountId").val());
+                                    notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight");
+                                    Swal.fire('Deleted!', 'Your Attachment Data has been deleted.', 'success');
+                                } else {
+                                    notify("Error To Updating Data", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                                }
+                            },
+                            error: function (error) {
+                                notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                                console.error('Error:', error.responseText);
+                            }
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire('Cancelled', 'Your action has been cancelled.', 'error');
+                    }
+                });
+            }
+
+
+            $(document).on("click", ".CPDtable_delete", function () {
+                var $row = $(this).closest("tr");
+                var id = $row.find('td.tbl_Main_ID').text();
+                var table = $('#Table1').DataTable();
+                if (id == "" || id == null) {
+                    var index = table.row($row).index();
+                    table.row($row).remove().draw();
+                    updateSequenceNumbers("#Table1", index);
+
+                } else {
+                    DeleteDetails(id);
+                }
+            });
+
+            function updateSequenceNumbers(table, startIndex) {
+                var $tbody = $(table + ' tbody');
+                $tbody.find('tr').each(function (idx) {
+                    var $currentRow = $(this);
+                    if (idx >= startIndex) {
+                        var newSequence = idx + 1;
+                        $currentRow.find('td:first').text(newSequence);
+                    }
+                });
+            }
+
+            function DeleteDetails(ID) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This Inventory Counting Item Is Permanently Deleted from the system..!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    confirmButtonColor: 'red',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("DELETEDETAILS", "InventoryCounting")',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: { Id: ID },
+                            success: function (response) {
+                                if (response.success) {
+                                    LoadDetails($("#InvCountId").val(), "Y");
+                                    notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight");
+                                    Swal.fire('Deleted!', 'Your data has been deleted.', 'success');
+                                } else {
+                                    notify("Error To Updating Data", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                                }
+                            },
+                            error: function (error) {
+                                notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                                console.error('Error:', error.responseText);
+                            }
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire('Cancelled', 'Your action has been cancelled.', 'error');
+                    }
+                });
+            }
+        }
+        //Function to handle form reset
+        {
+            $("#Form_reset_btn").click(function () {
+           
+                $(".Form_Elem").removeClass("border-danger");
+                $("#Header_Form")[0].reset();
+                $("#AttachmentTable tbody").html("");
+                $("#Barcodetbl tbody").html("");
+                $("#Status,#Form_Update_btn,#Form_Save_btn,#Form_Delete_btn,#Form_Draft_btn").prop("disabled", false);
+                $("#CopyTo").prop("disabled", true);
+                $("#Freight, #Tax, #TotPayDue, #TotBefDis").val("0.00");
+                $("#DocType").prop("disabled", false);
+                $("#Status").prop("disabled", true);
+                ApplyDetailstable([], "Table1")
+                HideBtn()
+                DefaultDate();
+                $("#BrchId").val(@BrchId).trigger("change");
+                updateTime();
+            });
+            function ResetForm() {
+                $(".Form_Elem").removeClass("border-danger");
+                $("#Header_Form")[0].reset();
+                $("#Freight, #Tax, #TotPayDue, #TotBefDis").val("0.00");
+                $("#Status,#Form_Update_btn,#Form_Save_btn,#Form_Delete_btn,#Form_Draft_btn").prop("disabled", false);
+                $("#CopyTo").prop("disabled", true);
+                $("#AttachmentTable tbody").html("");
+                $("#Barcodetbl tbody").html("");
+                $("#Form_reset_btn").click();
+                $("#Form_Draft_btn").show();
+                $("#Form_Resume_btn").show();
+                $("#DocType").prop("disabled", false)
+                DefaultDate();
+                ApplyDetailstable([], "Table1")
+                $("#BrchId").val(@BrchId).trigger("change");
+                updateTime();
+
+            }
+            function ShowBtn() {
+                $("#Form_Delete_btn").hide();
+                $("#Form_Update_btn").show();
+                $("#Form_Save_btn").hide();
+                $("#Form_Draft_btn").hide();
+                $("#Form_Resume_btn").hide();
+            }
+            function ShowBtn1() {
+                $("#Form_Delete_btn").show();
+                $("#Form_Save_btn").show();
+                $("#Form_Resume_btn").hide();
+
+            }
+            function HideBtn() {
+                $("#Form_Save_btn").show();
+                $("#Form_Resume_btn").show();
+                $("#Form_Draft_btn").show();
+                $("#Form_Delete_btn").hide();
+                $("#Form_Update_btn").hide();
+            }
+        }
+        //region All functions
+        {
+        function AddAttachmentData(table, InvCountId) {
+                var rowCount = $(table).find('tbody tr').length;
+                if (rowCount <= 0) {
+                    return false;
+                }
+                var AttachmentData = [];
+                var headers = [];
+                $(table).find('thead th').each(function () {
+                    headers.push($(this).text().trim().toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()<>]/g, "").replace(/ /gi, ''));
+                });
+                $(table).find('tbody tr').each(function () {
+                    var rowData = {};
+                    $(this).find('td').each(function (index) {
+                        if (headers[index] == "filedata") {
+                            rowData["FileData"] = $(this).text().trim();
+                        } else if (headers[index] == "filename") {
+                            rowData["FileName"] = $(this).text().trim();
+                        } else if (headers[index] == "attchdetid") {
+                            rowData["AttchDetId"] = $(this).text().trim();
+                        } else if (headers[index] == "fileextention") {
+                            rowData["FileExt"] = $(this).text().trim();
+                        } else if (headers[index] == "remark") {
+                            // Use .find('textarea').val() to get the value of textarea
+                            rowData["Remark"] = $(this).find('textarea').val();
+                        }
+                    });
+                    rowData["DocId"] = InvCountId;
+                    AttachmentData.push(rowData);
+                });
+                $.ajax({
+                    url: '@Url.Action("ADDITEMATTACHMENT", "InventoryCounting")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(AttachmentData),
+                    success: function (response) {
+                        if (response.success) {
+                            //  notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight");
+                            LoadAttachmentData($("#InvCountId").val());
+                            return true;
+
+                        }
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        console.error('Error:', error.responseText);
+                    }
+                });
+
+                return AttachmentData;
+            }
+        function LoadAttachmentData(Id) {
+                $.ajax({
+                    url: '@Url.Action("GETATACHMENT", "InventoryCounting")',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: { Id: Id },
+                    success: function (response) {
+                        $("#AttachmentTable tbody").html("");
+                        if (response.length > 0) {
+                            var index = 1;
+                            for (var i = 0; i < response.length; i++) {
+                                var list = "<tr>";
+                                list += "<td class='text-center'>" + index + "</td>"; // Add the index to the first column
+                                list += "<td class='p-0' nowrap><input class='p-1 form-control form-control-sm selectfile' type='file' placeholder='Choose File'/></td>";
+                                list += "<td class='p-0 align-items-center Remark' nowrap><textarea style='height:34px!important;' class='form-control form-control-sm'>" + (response[i].Remark == null ? " " : response[i].Remark) + "</textarea></td>";
+                                list += "<td class=' align-items-center filename' nowrap>" + response[i].FileName + "</td>";
+                                list += "<td class=' align-items-center fileExt' nowrap>" + response[i].FileExt + "</td>";
+                                list += "<td class=' align-items-center d-none fileData' nowrap>" + response[i].FileData + "</td>";
+                                list += "<td class=' align-items-center d-none attachId' nowrap>" + response[i].AttchDetId + "</td>";
+                                list += "<td class=' align-items-center d-none flag' nowrap>N</td>";
+                                list += "<td class='text-center p-0' nowrap><button style='width:100px;' type='button' class='btn p-1 mt-1 mb-1 ViewAttchment btn-sm btn-primary'>View</button></td>";
+                                list += "<td class='text-center p-0' nowrap><button style='width:100px;' type='button' class='btn p-1 mt-1 mb-1 DeleteAttchment btn-sm btn-danger'>Delete</button></td>";
+                                list += "</tr>";
+                                $("#AttachmentTable tbody").append(list);
+                                index++;
+                            }
+                        }
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                        console.error('Error:', error.responseText);
+                    }
+                });
+            }
+         LoadTableData();
+         LoadDraftTableData();
+        function LoadTableData() {
+                Loader()
+                $.ajax({
+                    url: '@Url.Action("GET", "InventoryCounting")', // Update with your API endpoint for retrieving menu data
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response && response.length > 0) {
+                            var lastRow = response[response.length - 1];
+                            var lastDocNum = lastRow.DocNum;
+                            var newDocNum = lastDocNum + 1;
+                            $('#DocNum').val(newDocNum);
+                        } else {
+                            $('#DocNum').val(1);
+                        }
+                        Loader();
+                        ApplyDatatable(response, "Table");
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        console.error('Error:', error.responseText);
+                    }
+                });
+            }
+        function LoadDraftTableData() {
+                $.ajax({
+                    url: '@Url.Action("GETDRAFT", "InventoryCounting")', // Update with your API endpoint for retrieving menu data
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        ApplyDatatable(response, "Table3")
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        console.error('Error:', error.responseText);
+                    }
+                });
+            }
+        //format date
+         function formatAndSetDate(inputDate) {
+                if (inputDate) {
+                    const parts = inputDate.split(' ');
+                    const datePart = parts[0];
+                    const timePart = parts[1];
+                    const [day, month, year] = datePart.split('-');
+                    const formattedDate = `${year}-${month}-${day}`;
+                    const formattedDateTime = `${formattedDate} ${timePart}`;
+                    return formattedDate;
+                } else {
+                    // Handle the case where inputDate is undefined
+                    return null; // Or you can return a default value or throw an error
+                }
+            }
+
+        function SplitDatebyspace(inputDate) {
+                if (inputDate) {
+                    const parts = inputDate.split(' ');
+                    return parts[0];
+                } else {
+                    return null; // Or handle the undefined case as needed
+                }
+            }
+
+        function ApplyDatatable(jsonData, Table_Id) {
+                if ($.fn.DataTable.isDataTable('#' + Table_Id)) {
+                    $('#' + Table_Id).DataTable().destroy();
+                }
+                var table = $('#' + Table_Id).DataTable({
+                    scrollX: true,
+                    responsive: true,
+                    scrollY: '600px',
+                    responsive: true,
+                    "ordering": true,
+                    autoWidth: true,
+                    orderCellsTop: true,
+                    scrollCollapse: true,
+                    "columnDefs": [{
+                        "targets": '_all',
+                        "createdCell": function (td, cellData, rowData, row, col) {
+                            $(td).css('padding', '5px')
+                            $(td).attr('nowrap', 'nowrap')
+                        }
+                    }],
+                    data: jsonData,
+                    columns: [
+                        {
+                            data: null,
+                            title: "Sr No",
+                            className: 'tbl_Sr_no  text-center',
+                            render: function (data, type, row, meta) {
+                                // 'meta.row' gives the index of the row
+                                return meta.row + 1;
+                            }
+                        },
+                        {
+                            data: null,
+                            title: 'Action',
+                            className: 'text-center',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                if (Table_Id == "Table") {
+                                    return '<i class="fa fa-clone Duplicate  text-dark mr-1" title="Duplicate"></i> <i class="fa fa-edit table_edit text-primary mr-1" title="Edit Document"></i>';
+                                } else {
+                                    return '<i class="fa fa-edit table_edit1 text-primary mr-1" title="Edit Document"></i> <i class="fa fa-trash text-danger mr-2  table_delete" title="Delete Document"></i>';
+                                }
+                            }
+                        },
+                        {
+                            data: 'IsActive',
+                            title: 'Active',
+                            className: 'text-center',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                if (data == "Y") {
+                                    return `<center><label  class="tblswitch">
+                                                                                                                                          <input type="checkbox" disabled value="`+ data + `" checked name="IsActive" class="tbltoggleSwitch form-control form-control-sm ">
+                                                                                                                                  <span class="tblslider"></span>
+                                                                                                                                  </label></center>`;
+                                } else {
+                                    return `<center><label class="tblswitch">
+                                                                                                                                              <input type="checkbox" disabled value="`+ data + `"  name="IsActive" class="tbltoggleSwitch form-control form-control-sm ">
+                                                                                                                                      <span class="tblslider"></span>
+                                                                                                                                  </label></center>`;
+                                }
+
+                            }
+                        },
+                        { data: 'InvCountId', title: 'InvCountId', className: 'tbl_GdIssueId d-none tbl_Main_ID' },
+                        { data: 'DocNum', title: 'Number', className: 'tbl_VendorRefNo text-center' },
+                        { data: 'CountDate', title: 'Count Date', className: 'tbl_CountDate' },
+                        { data: 'CountTime', title: 'Count Time', className: 'tbl_CountTime' },
+                        {
+                            data: 'InvCounterType',
+                            title: 'Inventory Counter Type',
+                            className: 'text-center',
+                            render: function (data, type, row) {
+                                if (data == "U") {
+                                    return `User`;
+                                }
+                                else {
+                                    return `Employee`;
+                                }
+
+                            }
+                        },
+                        { data: 'InvCounterType', title: 'Inv Counter Type', className: 'tbl_InvCounterType d-none' },
+                        { data: "EmpName", title: 'Employee Name', className: 'tbl_Finyr text-center' },
+                        { data: 'EmpId', title: 'EmpId', className: 'tbl_EmpId d-none' },
+                        { data: "UserName", title: 'User Name', className: 'tbl_Finyr text-center' },
+                        { data: 'UserId', title: 'UserId', className: 'tbl_UserId d-none' },
+                        { data: 'Finyr', title: 'Financial Year', className: 'tbl_Finyr text-center' },
+                        { data: 'FinyrId', title: 'FinyrId', className: 'tbl_FinyrId d-none' },
+                        { data: 'FinyrNum', title: 'Number No', className: 'tbl_Num text-right' },
+
+                        {
+                            data: 'Status',
+                            title: 'Status',
+                            className: 'text-center',
+                            render: function (data, type, row) {
+                                if (data == "O") {
+                                    return `Open`;
+                                } else if (data == "C") {
+                                    return `Close`;
+                                }
+                                else {
+                                    return `Cancelled`;
+                                }
+
+                            }
+                        },
+                        { data: 'Status', title: 'Status', className: 'tbl_Status d-none' },
+                        { data: 'EOFiscalYearDt', title: 'End of Fiscal Year Date', className: 'tbl_EOFiscalYearDt text-center' },
+                        { data: 'RefText', title: 'Referance Text', className: 'tbl_RefText text-center' },
+                        { data: 'Remarks', title: 'Remark', className: 'tbl_Remark text-center' },
+                        { data: 'CreatedBy', title: 'Created By', className: 'tbl_CreatedBy d-none' },
+                        { data: 'CreateDate', title: 'Create Date', className: 'tbl_CreateDate d-none' },
+                        { data: 'UpdatedBy', title: 'Updated By', className: 'tbl_UpdatedBy d-none' },
+                        { data: 'UpdateDate', title: 'Update Date', className: 'tbl_UpdateDate d-none' },
+                    ],
+                    "columnDefs": [
+                        { "targets": 'th', "className": 'dt-no-wrap' }
+                    ],
+                });
+            }
+
+        }
+        //Load Details
+        {
+            function convertValuesToString(obj) {
+                for (var key in obj) {
+                    if (typeof obj[key] === 'object') {
+                        convertValuesToString(obj[key]); // Recursively call for nested objects
+                    } else if (typeof obj[key] === null) {
+                        obj[""];
+                    } else {
+                        obj[key] = String(obj[key]); // Convert value to string
+                    }
+                }
+            }
+            function removeKeysFromArray(jsonArray) {
+                const keysToRemove = ["UpdateDate", "UpdateTS", "UpdatedBy", "CreateDate", "CreateTS", "CreatedBy"];
+                jsonArray.forEach(obj => {
+                    // Loop through each key to remove
+                    keysToRemove.forEach(key => {
+                        // Check if the key exists in the object
+                        if (obj.hasOwnProperty(key)) {
+                            // Remove the key
+                            delete obj[key];
+                        } else {
+                            console.log(`Key "${key}" does not exist in an object.`);
+                        }
+                    });
+                });
+
+                // Return the modified array of JSON objects
+                return jsonArray;
+            }
+            // Function to add details to the table
+            function AddDetails(invCountId) {
+                var tableData = $('#Table1 tbody tr').map(function () {
+                    var tr = $(this);
+                    return {
+                        "LineNum": $(tr).find('.Tbl_LineNum').text(),
+                        "BarCode": $(tr).find('.Tbl_BarCode input').val(),
+                        "InvCountDetId": $(tr).find('.tbl_Main_ID').text(),
+                        "InvCountId": invCountId, // Ensure this matches the parameter
+                        "ItemId": $(tr).find('.Tbl_ItemId select').val() || "0",
+                        "WhsId": $(tr).find('.Tbl_WhsId select').val(),
+                        "WhsQty": $(tr).find('.Tbl_WhsQty input').val() || "0",
+                        "Counted": $(tr).find('.Tbl_Counted input').val() || "N",
+                        "CountedQty": $(tr).find('.Tbl_CountedQty input').val() || "0",
+                        "UomId": $(tr).find('.Tbl_UomId select').val(),
+                        "Diff": $(tr).find('.Tbl_Diff input').val() || "0",
+                        "Freeze": $(tr).find('.Tbl_Freez input').val() || "N",
+                    };
+                }).get();
+                $.ajax({
+                    url: '@Url.Action("ADDITEMDETAILS", "InventoryCounting")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(tableData),
+                    success: function (response) {
+                        if (response.success) {
+                            $("#Create_User_Tab").click();
+                            return true;
+                        } else {
+                            console.error("Error in AddDetails response:", response);
+                        }
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        console.error('Error:', error.responseText);
+                    }
+                });
+            }
+
+            function LoadDetails(ID) {
+                Loader();
+                $.ajax({
+                    url: '@Url.Action("GETITEMDET", "InventoryCounting")',
+                    type: 'GET',
+                    data: { ID: ID },
+                    dataType: 'json',
+                    success: function (response) {
+                        Loader();
+                        ApplyDetailstable(response, "Table1");
+                        if (response && response.length > 0) {
+                            response.forEach(function (item) {
+                                var itemId = item.ItemId;
+                                var $row = $("#Table1 tr").last();
+                                if (itemId) {
+                                    GetBarcode(itemId, $row);
+                                } else {
+                                    console.error('itemId is null or undefined');
+                                }
+                            });
+                        } else {
+                            console.error('Response is empty or undefined');
+                        }
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        console.error('Error in LoadDetails:', error.responseText);
+                    }
+                });
+            }
+          ApplyDetailstable([], "Table1")
+            //Apply Datatable
+        function ApplyDetailstable(jsonData, Table_Id) {
+            if ($.fn.DataTable.isDataTable('#' + Table_Id)) {
+                $('#' + Table_Id).DataTable().destroy();
+            }
+
+            var DocType = $("#DocType").val();
+            var DValueService = "";
+            var DValueItem = "";
+            if (DocType == "S") {
+                DValue = "";
+                DValueItem = " d-none";
+            } else {
+                DValue = " d-none";
+                DValueItem = "";
+            }
+
+            $('#' + Table_Id).DataTable({
+                scrollX: true,
+                responsive: true,
+                scrollY: '500px',
+                pageLength: 100,
+                autoWidth: true,
+                orderCellsTop: true,
+                scrollCollapse: true,
+                data: jsonData,
+                columns: [
+                    {
+                        data: null,
+                        title: "Sr No",
+                        className: 'tbl_Sr_no no-wrap text-center',
+                        render: function (data, type, row, meta) {
+                            return meta.row + 1;
+                        }
+                    },
+                    {
+                        data: null,
+                        title: 'Action',
+                        className: 'text-center',
+                        render: function (data, type, row) {
+                            return '<center><i class="fa fa-trash text-danger mr-2 CPDtable_delete"></i></center>';
+                        }
+                    },
+                        {
+                            data: 'BarCode',
+                            title: 'Bar/QR Code',
+                            className: 'Tbl_BarCode text-right' + DValueItem,
+                            render: function (data, type, row) {
+                                return `<input style='width:150px' value="${data}" type="number" placeholder="0000000000000" oninput="MaxLengthInp(this,15)" class="form-control BarCodeInp form-control-sm Form_Elem" />`;
+                            }
+                        },
+                        { data: 'LineNum', title: 'LineNum', className: 'Tbl_LineNum d-none' },
+                    { data: 'InvCountDetId', title: 'InvCountDetId', className: 'tbl_Main_ID d-none' },
+                    { data: 'InvCountId', title: 'InvCountId', className: 'Tbl_InvCountId d-none' },
+                    {
+                        data: 'ItemId',
+                        title: 'Item Code',
+                        className: 'Tbl_ItemId text-center ' + DValueItem,
+                        render: function (data, type, row) {
+                            return ItemDropdown.replace(`value="${data}"`, `value="${data}" selected`);
+                        }
+                    },
+                    {
+                        data: 'ItemId',
+                        title: 'Item Name',
+                        className: 'Tbl_ItemName text-center ' + DValueItem,
+                        render: function (data, type, row) {
+                            return ItemNameDropdown.replace(`value="${data}"`, `value="${data}" selected`);
+                        }
+                    },
+                    {
+                        data: 'WhsId',
+                        title: 'Warehouse',
+                        className: 'Tbl_WhsId text-center ' + DValueItem,
+                        render: function (data, type, row) {
+                            return WarehouseDropdown.replace(`value="${data}"`, `value="${data}" selected`);
+                        }
+                    },
+                    {
+                        data: 'WhsQty',
+                        title: 'Quantity',
+                        className: 'Tbl_WhsQty text-right' + DValueItem,
+                        render: function (data, type, row) {
+                            return `<input style='width:120px' value="${data}" type="number" placeholder="Warehouse  Qty" oninput="MaxLengthInp(this,10)" class="form-control Qty  Tbl_WhsQty_Input form-control-sm Form_Elem" readonly />`;
+                        }
+                    },
+                    {
+                        data: 'Counted',
+                        title: 'Counted',
+                        className: 'text-center Tbl_Counted',
+                        render: function (data, type, row) {
+                            var checked = data === 'Y' ? 'checked' : '';
+                            return `<center><label class="tblswitch"><input type="checkbox" class="tbltoggleSwitch form-control form-control-sm" data-toggle="toggle" value="${data}"  ${checked}><span class="tblslider"></span></label></center>`;
+                        }
+                    },
+                    {
+                        data: 'CountedQty',
+                        title: 'Counted Qty',
+                        className: 'Tbl_CountedQty text-right',
+                        render: function (data, type, row) {
+                            return `<input style='width:120px' type="number" value="${data}" oninput="MaxLengthInp(this,10)"  class="form-control Tbl_CountedQty_Input CountedQty form-control-sm Form_Elem" />`;
+                        }
+                    },
+                    {
+                        data: 'UomId',
+                        title: 'Uom',
+                        className: 'Tbl_UomId text-center' + DValueItem,
+                        render: function (data, type, row) {
+                            return UOMDropdown.replace(`value="${data}"`, `value="${data}" selected`);
+                        }
+                    },
+                    {
+                        data: 'Diff',
+                        title: 'Difference',
+                        className: 'Tbl_Diff text-right',
+                        render: function (data, type, row) {
+                            return `<input type="number" value="${data}" class="form-control Tbl_Diff_Input form-control-sm Form_Elem" readonly />`;
+                        }
+                    },
+
+                    {
+                        data: 'Freeze',
+                        title: 'Freeze',
+                        className: 'text-center Tbl_Freez',
+                        render: function (data, type, row) {
+                            var checked = data === 'Y' ? 'checked' : '';
+                            return `<center><label class="tblswitch"><input type="checkbox"  value="${data}" class="tbltoggleSwitch form-control form-control-sm" data-toggle="toggle"  ${checked}><span class="tblslider"></span></label></center>`;
+                        }
+                    },
+                      
+                ],
+                "columnDefs": [
+                    { "targets": '_all', "className": 'dt-no-wrap' }
+                ]
+            });
+                if (DocType === 'S') {
+                    $('.Tbl_WhsId select').prop('disabled', true); // Disable Warehouse dropdown
+                } else {
+                    $('.Tbl_ItemId select').prop('disabled', true);
+                    $('.Tbl_WhsId select').prop('disabled', true); // Disable Item dropdown
+                    $('.Tbl_ItemName select').prop('disabled', true); // Disable Item dropdown
+                    $('.Tbl_FromWhsId select').prop('disabled', true); // Disable Item dropdown
+                    $('.Tbl_BarCode input').prop('disabled', true); // Disable Item dropdown
+                    $('.Tbl_Qty input').prop('disabled', true); // Disable Item dropdown
+                    $('.Tbl_CountedQty input').prop('disabled', true); // Disable Item dropdown
+                    $('.Tbl_UomId select').prop('disabled', true); // Disable Item dropdown
+                }
+
+            $('#' + Table_Id + ' tbody').off('click').on('click', '.CPDtable_delete', function () {
+                var row = $(this).closest('tr');
+                var table = $('#' + Table_Id).DataTable();
+                table.row(row).remove().draw();
+            });
+
+            $('#' + Table_Id + ' tbody').on('input', '.Tbl_CountedQty_Input', function () {
+                calculateDifference(this);
+                setCountedCheckbox(this);
+            });
+
+            function calculateDifference(input) {
+                var row = $(input).closest('tr');
+                var whsQty = parseFloat($(row).find('.Tbl_WhsQty_Input').val()) || 0;
+                var countedQty = $(row).find('.Tbl_CountedQty_Input').val().trim();
+                if (countedQty === '') {
+                    $(row).find('.Tbl_Diff input').val('0.00');
+                    return;
+                }
+                countedQty = parseFloat(countedQty) || 0;
+                var diff = whsQty - countedQty;
+                $(row).find('.Tbl_Diff input').val(diff.toFixed(2));
+            }
+
+            function setCountedCheckbox(input) {
+                var row = $(input).closest('tr');
+                var countedQty = $(input).val().trim();
+                if (countedQty !== '' && countedQty !== '0') {
+                    $(row).find('.tbltoggleSwitch').prop('checked', true).val('Y');
+                } else {
+                    $(row).find('.tbltoggleSwitch').prop('checked', false).val('N');
+                }
+            }
+
+        }
+        function ValidateLineRecords(Data) {
+            var $tableRows = $("#Table1 tbody tr");
+            var tableLength = $tableRows.length;
+
+            for (var i = 0; i < tableLength; i++) {
+                var $row = $tableRows.eq(i);
+                var dataObj = Data[i];
+                if (dataObj.RowStatus == "T") {
+                    $row.find("input").prop("readonly", true).css({ "background-color": "white" });
+                    $row.find("select").prop("disabled", true).css({ "background-color": "white" });
+                    $row.find("i").prop("disabled", true)
+                } else if (dataObj.RowStatus == "C") {
+                    $row.find("input, select").prop("disabled", true).css({ "background-color": "", "color": "black" });;
+                    $row.find("input, select").prop("readonly", true).css({ "background-color": "", "color": "black" });
+                    $row.find("i").prop("disabled", true)
+                }
+            }
+        }
+        }
+        // Copy From Region
+        {
+            $(".CopyToDrop").click(function () {
+                var value = $(this).data('value');
+                var obj = {
+                    Id: $("#InvCountId").val(),
+                    Docflag: value,
+
+                }
+                sessionStorage.setItem("CopyTodata", JSON.stringify(obj));
+
+            });
+
+            var table; // Define table globally
+            var Copyfromheaderdata = [];
+
+            // Function to check and handle 'Copy To' data from sessionStorage
+         function checkCopyTo() {
+            var copyToData = sessionStorage.getItem("CopyTodata");
+            if (copyToData) {
+                var data = JSON.parse(copyToData);
+                if (data.Docflag !== "IC") {
+                    loadCopyFrom(data.Docflag)
+                        .then(response => {
+                            if (response) {
+                                if (data.Docflag == "IP") {
+                                    var rowData = Copyfromheaderdata.find(obj => obj.InvPostId == data.Id);
+                                    if (rowData) {
+                                        CopyFromLine(rowData);
+                                    } else {
+                                        alert("No matching data found for ID: " + data.Id);
+                                    }
+                                } else {
+                                    alert("Invalid Docflag: " + data.Docflag);
+                                }
+                                sessionStorage.removeItem("CopyTodata"); // Clear sessionStorage after use
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                } else {
+                    alert("Docflag is IC, skipping copy operation.");
+                }
+            } else {
+                console.log("No 'CopyTodata' found in sessionStorage.");
+            }
+        }
+
+
+            // Event handler for 'Copy From' dropdown clicks
+            $(".CopyDrop").click(function () {
+                var value = $(this).data('value');
+                loadCopyFrom(value);
+                $('#CopyFromModal').modal('show');
+            });
+
+            // Function to load 'Copy From' data based on selected value
+            function loadCopyFrom(value) {
+                return new Promise((resolve, reject) => {
+                    $.ajax({
+                        url: '@Url.Action("GETCOPYFROM", "InventoryCounting")',
+                        type: 'GET',
+                        data: { Flag: value },
+                        dataType: 'json',
+                        success: function (response) {
+                            Copyfromheaderdata = response;
+                            COPYFROMTABLE('Table4', response, value); // Pass Value to COPYFROMTABLE
+                            // Update modal title based on the selected option
+                            if (value === 'IP') {
+                                $('#CopyFromModal .modal-title').text('Inventory Posting');
+                            } else if (value === 'SBA') {
+                                $('#CopyFromModal .modal-title').text('List Of Sales Blanket Agreement');
+                            }
+                            resolve(Copyfromheaderdata); // Resolve the promise here
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                            console.error('Error:', error.responseText);
+                            reject(error); // Reject the promise here
+                        }
+                    });
+                });
+            }
+
+            // Function to create and display the 'Copy From' table with dynamic columns
+            function COPYFROMTABLE(Table_Id, jsonData, Value) {
+                if ($.fn.DataTable.isDataTable('#' + Table_Id)) {
+                    $('#' + Table_Id).DataTable().destroy();
+                }
+
+                var columns = [
+                    // Column definition for 'Sr No'
+                    {
+                        data: null,
+                        title: "Sr No",
+                        className: 'tbl_Sr_no text-center',
+                        render: function (data, type, row, meta) {
+                            return meta.row + 1; // 'meta.row' gives the index of the row
+                        }
+                    },
+                    // Column definition for 'Action'
+                    {
+                        data: null,
+                        title: 'Action',
+                        className: 'text-center',
+                        render: function (data, type, row) {
+                            if (Table_Id == "Table4") {
+                                return '<i class="fa fa-edit table_getitemdata text-primary mr-1" title="Edit Document"></i>';
+                            } else {
+                                return '<i class="fa fa-edit table_edit1 text-primary mr-1" title="Edit Document"></i> <i class="fa fa-trash text-danger mr-2 table_delete" title="Delete Document"></i>';
+                            }
+                        }
+                    }
+                ];
+
+                // List of columns to display with dynamic names based on Value
+                var columnNames = {};
+
+                if (Value === 'SR') {
+                    columnNames = {
+                        'PurReqId': { title: 'Purchase Request No', className: 'tbl_PurReqId' },
+                        'PostingDt': { title: 'Posting Date', className: 'tbl_PostingDt' },
+                        'Requester': { title: 'Request Type', className: 'tbl_Requester' },
+                        'Reqtname': { title: 'Requester', className: 'tbl_Reqtname' },
+                        'DeliveryDt': { title: 'Delivery Date', className: 'tbl_DeliveryDate' },
+                        'DocumentDt': { title: 'Document Date', className: 'tbl_DocumentDt' },
+                        'RequiredDt': { title: 'Required Date', className: 'tbl_RequiredDt' },
+                        'Remarks': { title: 'Remarks', className: 'tbl_Remarks' }
+                    };
+                } else if (Value === 'IP') {
+                    columnNames = {
+                        'InvPostId': { title: 'Sales Quotation No', className: 'Ctbl_SalsQuotId d-none' },
+                        'DocNum': { title: 'Goods Receipt No', className: 'Ctbl_DocNum' },
+                        'PostingDt': { title: 'Posting Date', className: 'Ctbl_PostingDt' },
+                        'DocumentDt': { title: 'Document Date', className: 'Ctbl_DocumentDt' },
+                        'Remarks': { title: 'Remarks', className: 'Ctbl_Remarks' }
+                    };
+                }
+
+                Object.keys(columnNames).forEach(function (key) {
+                    columns.push({
+                        data: key,
+                        title: columnNames[key].title,
+                        className: columnNames[key].className + ' text-center' // Assign class dynamically
+                    });
+                });
+
+                $('#' + Table_Id).DataTable({
+                    data: jsonData,
+                    columns: columns,
+                    scrollX: true,
+                    responsive: true,
+                    scrollY: '600px',
+                    ordering: true,
+                    autoWidth: true,
+                    orderCellsTop: true,
+                    scrollCollapse: true,
+                    columnDefs: [
+                        { targets: 'th', className: 'dt-no-wrap' }
+                    ]
+                });
+            }
+
+            // Event handler for clicking on the table item to get data
+            $(document).on('click', '.table_getitemdata', function () {
+                var closestTable = $(this).closest('table').DataTable();
+                var rowData = closestTable.row($(this).parents('tr')).data();
+                CopyFromLine(rowData);
+            });
+
+            // Function to handle copying data from the selected line
+            function CopyFromLine(rowData) {
+                if (rowData && rowData.InvPostId) {
+                    var idValue = rowData.InvPostId;
+                    var data = Copyfromheaderdata.find(obj => obj.InvPostId === idValue);
+                    if (data) {
+                        BindHeaderCopyFrom(data);
+                    }
+                    $.ajax({
+                        url: '@Url.Action("GETITEMDET","InventoryPosting")',
+                        type: 'GET',
+                        data: { ID: idValue, Flag: "O" },
+                        dataType: 'json',
+                        success: function (response) {
+                            var i = 1;
+                            response.forEach(function (item) {
+                                item.BaseDocLineNum = item.LineNum;
+                                item.LineNum = i;
+                                item.BaseDocEntry = data.DocNum;
+                                item.BaseDocType = 'IP';
+                                item.InvCountDetId = "";
+                                item.InvCountId = "";
+                                item.RowStatus = 'O';
+                                item.Qty = item.OpenQty;
+                                item.PrevQty = '0';
+                                item.Editflag = 'A';
+                                item.Remarks = "";
+                            });
+                            ApplyDetailstable(response, "Table1");
+                            $(".Qty").trigger('input');
+                            disableWhsIdField();
+                            $('#CopyFromModal').modal('hide');
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                }
+                function disableWhsIdField() {
+                    $('#Table1 .Tbl_WhsId,.Tbl_ItemName,.Tbl_ItemId select').prop('disabled', true);
+                }
+            }
+
+            // Function to bind data to header fields from the selected copy data
+            function BindHeaderCopyFrom(data) {
+                Object.entries(data).forEach(([key, value]) => {
+                    var input = $("#" + key);
+                    if (!["Tax", "TotBefDis", "TotPayDue", "Status", "DisPer", "DisAmt"].includes(key)) {
+                        if (input.hasClass("select2-hidden-accessible")) {
+                            input.val(value).trigger("change");
+                        } else {
+                            if (["DocumentDt", "PostingDt", "RequiredDt"].includes(key)) {
+                                value = formatAndSetDate(value);
+                            }
+                            input.val(value);
+                        }
+                    }
+                });
+            }
+        }
+        // Region Navigation
+        {
+            var $table = $("#Table");
+            $table.find("tbody tr:first").addClass("active");
+            $(".btn_forward").click(function () {
+                var $currentRow = $table.find(".active");
+                var $nextRow = $currentRow.next("tr");
+                if ($nextRow.length > 0) {
+                    $currentRow.removeClass("active");
+                    $nextRow.addClass("active");
+                    BindHederRecords($nextRow, "N");
+                } else {
+                    var $firstRow = $table.find("tbody tr:first");
+                    $table.find(".active").removeClass("active");
+                    $firstRow.addClass("active");
+                    BindHederRecords($firstRow, "N");
+
+                }
+            });
+            $(".btn_backward").click(function () {
+                var $currentRow = $table.find(".active");
+                var $prevRow = $currentRow.prev("tr");
+                if ($prevRow.length > 0) {
+                    $currentRow.removeClass("active");
+                    $prevRow.addClass("active");
+                    BindHederRecords($prevRow);
+                } else {
+                    var $lastRow = $table.find("tr:last");
+                    $table.find(".active").removeClass("active");
+                    $lastRow.addClass("active");
+                    BindHederRecords($lastRow, "N");
+                }
+            });
+            $(".btn_first").click(function () {
+                var $firstRow = $table.find("tbody tr:first");
+                $table.find(".active").removeClass("active");
+                $firstRow.addClass("active");
+                BindHederRecords($firstRow, "N");
+            });
+            $(".btn_last").click(function () {
+                var $lastRow = $table.find("tr:last");
+                $table.find(".active").removeClass("active");
+                $lastRow.addClass("active");
+                BindHederRecords($lastRow, "N");
+            });
+            $(".btn_reload").click(function () {
+                ResetForm()
+                $("#Form_reset_btn").click();
+                HideBtn()
+            });
+        }
+        function updateTime() {
+            let currentDate = new Date();
+            let hours = currentDate.getHours().toString().padStart(2, '0');
+            let minutes = currentDate.getMinutes().toString().padStart(2, '0');
+            let seconds = currentDate.getSeconds().toString().padStart(2, '0');
+            let currentTime = hours + ':' + minutes + ':' + seconds;
+            $("#CountTime").val(currentTime);
+        }
+    });
+</script>
+

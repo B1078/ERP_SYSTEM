@@ -1,0 +1,1029 @@
+﻿@{
+    string? UserName = ViewContext.HttpContext.Session.GetString("UserName");
+    DateTime currentDate = DateTime.Now;
+    string formattedDate = currentDate.ToString("dd-MM-yyyy");
+}
+<!--  Menu analytics start -->
+<div class="col-xl-12 col-md-12">
+    <div class="card table-card p-2 mb-0">
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn text-center btn-sm btn-primary btn_first p-2" title="Get First Document" style="width:50px; font-size:18px;">
+                    <i class="fa fa-arrow-circle-o-left"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary btn_backward p-2" title="Get Privious Record" style="width:50px; font-size:18px;">
+                    <i class="fas fa-long-arrow-alt-left"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary p-2 btn_forward" title="Get Next Record" style="width:50px; font-size:18px;">
+                    <i class="fas fa-long-arrow-alt-right"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary btn_last p-2" title="Get Last Document" style="width:50px; font-size:18px;">
+                    <i class="fa fa-arrow-circle-o-right"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary btn_reload p-2" title="Reload" style="width:50px; font-size:18px;">
+                    <i class="fa fa-refresh"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card table-card mt-2">
+        <div class="card-header">
+            <h5 class="webtitle">Branch Master</h5>
+            <div class="card-header-right">
+                <ul class="list-unstyled card-option">
+                    <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                    <li><i class="fa fa-window-maximize full-card"></i></li>
+                    <li><i class="fa fa-minus minimize-card"></i></li>
+                    <li><i class="fa fa-refresh reload-card"></i></li>
+                    <li hidden><i class="fa fa-trash close-card"></i></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-block shadow">
+            <!-- Row start -->
+            <div class="row p-2">
+                <div class="col-lg-12 col-xl-12 ">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs  tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" id="Create_User_Tab" href="#Create_User" role="tab">Create Branch</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#All_Users" role="tab">All  Branches</a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content tabs card-block">
+                        <div class="tab-pane active p-0 m-0 mt-2" id="Create_User" role="tabpanel">
+                            <form id="From" class="w-100 mt-4 p-4 border">
+                                <div class="row justify-content-start mt-1 mb-3 p-1">
+                                    <div class="col-md-6 col-lg-6">
+                                        <label class="switch">
+                                            <input type="checkbox" value="Y" checked name="IsActive" id="IsActive" class="toggleSwitch form-control form-control-sm">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-6 col-lg-6">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-3"></div>
+                                            <div class="col-md-3">
+                                                <button type="button" id="DownloadTemplete" class="btn btn-sm btn-primary w-100">
+                                                    Download Template
+                                                </button>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <input class='p-1 form-control form-control-sm selectfile' id="Import" type='file' placeholder='Choose File' />
+                                            </div>
+                                            <div class="col-md-3 d-flex justify-content-end">
+                                                <button type="button" id="Upload_Xls" class="btn btn-sm btn-success w-100">Upload</button>
+                                                <button type="button" class="btn btn-sm btn-primary" id="ViewExcel"><i class="fa fa-eye"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <hr>
+                                <div class="row mt-2">
+                                    <input hidden name="BrchId" id="BrchId" value="" type="text" placeholder="BrchId" class="form-control form-control-sm Form_Elem" />
+                                    <div class="col-md-6 mt-1 mb-1">
+                                        <label for="LocId">Location</label>
+                                        <select name="LocId" id="LocId" type="text" class="form-control  form-control-sm Form_Elem">
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mt-1 mb-1">
+                                        <label for="BrchName">Branch Name</label>
+                                        <input name="BrchName" id="BrchName" type="text" oninput="MaxLengthInp(this,50)" placeholder="Branch Name" class="form-control form-control-sm Form_Elem" />
+                                     </div>
+                                 </div>
+                                
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mt-1 mb-1">
+                                        <label for="BrchAddr">Branch Address</label>
+                                        <textarea style="height:103px;" name="BrchAddr" id="BrchAddr" type="text" class="form-control form-control-sm Form_Elem"></textarea>
+                                    </div>
+                                    <div class="col-md-6 mt-1 mb-1">
+                                        <div class="row">
+                                            <div class="col-md-6 mt-1 mb-1">
+                                                <label for="CntryId">Branch Country</label>
+                                                <select name="CntryId" id="CntryId" type="text" placeholder="Branch Country" class="form-control  form-control-sm Form_Elem">
+                                                    <option value="0">Select Country</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mt-1 mb-1">
+                                                <label for="StateId">Branch State</label>
+                                                <select name="StateId" id="StateId" type="text" class="form-control  form-control-sm Form_Elem">
+                                                    <option value="0">Select State</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mt-1 mb-1">
+                                                <label for="BrchCity">Branch City</label>
+                                                <input name="BrchCity" id="BrchCity" type="text" placeholder="Branch City" class="form-control form-control-sm Form_Elem" />
+                                            </div>
+                                            <div class=" col-md-6  mt-1 mb-1">
+                                                <label for="BrchGSTINNo">GSTIN No</label>
+                                                <input tabindex="10" id="BrchGSTINNo" name="BrchGSTINNo" type="text" placeholder="00AAAAA0000A0AA" class="form-control GSTININPUT form-control-sm  Address_Form_Elem" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                 </div>
+                                <div class="row">
+                                    <div class="col-md-4 mt-1 mb-1 d-none">
+                                        <label for="CreatedBy">Created By</label>
+                                        <input name="CreatedBy" id="CreatedBy" readonly type="text" value="@UserName" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-4 mt-1 mb-1 d-none">
+                                        <label for="UpdatedBy">Updated By</label>
+                                        <input name="UpdatedBy" id="UpdatedBy" readonly type="text" value="@UserName" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-4 mt-1 mb-1 d-none">
+                                        <label for="CreateDate">Create Date</label>
+                                        <input name="CreateDate" id="CreateDate" readonly type="text" value="@formattedDate" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-4 mt-1 mb-1 d-none">
+                                        <label for="UpdateDate">Update Date</label>
+                                        <input name="UpdateDate" id="UpdateDate" readonly type="text" value="@formattedDate" placeholder="Created by" class="form-control form-control-sm Form_Elem" />
+                                    </div>
+                                    <div class="col-md-12 mt-3">
+                                        <button type="button" id="Form_Delete_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm btn-danger">Delete</button>
+                                        <button type="button" id="Form_Update_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm text-white btn-info">Update</button>
+                                        <button type="button" id="Form_Save_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm btn-success">Save</button>
+                                        <button type="reset" id="Form_reset_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm btn-dark">Reset</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane p-3" id="All_Users" role="tabpanel">
+                            <div class="row p-3  mt-2 border">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped   table-hover table-bordered w-100" id="Table">
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Row end -->
+        </div>
+    </div>
+</div>
+<div class="modal" id="excelModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Excel Sheet data</h5>
+            <span class="close closeModalInstallments" data-bs-dismiss="modal" id="">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="card-body border">
+                <div class="table-responsive" style="height:500px;">
+                    <table class="table table-bordered table-striped table-hover w-100" cellspacing="0" cellpadding="0" border="1" id="excelTable">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        function Loader() {
+            $(".Loader1").toggleClass('d-none');
+        }
+        //Get Dropdown Data
+        {
+            // GET City
+            $.ajax({
+                url: '@Url.Action("STATE","GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "<option value=''>Select State</option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].StateId + "'>" + response[i].StateCode + "-" + response[i].StateName + "</option>";
+                        }
+                        $("#StateId").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+
+            //Get Country Data
+            $.ajax({
+                url: '@Url.Action("COUNTRY","GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list ="<option value=''>Select Country</option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].CntryId + "'>" + response[i].CntryCode + "-" + response[i].CntryName + "</option>";
+                        }
+                        $("#CntryId").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+            //Get Location Data
+            $.ajax({
+                url: '@Url.Action("LOCATION","GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "<option value=''>Select Location</option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].LocId + "'>" + response[i].LocCode + "-" + response[i].LocName + "</option>";
+                        }
+                        $("#LocId").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+            
+        }
+        //Region Add User
+        {
+            $("#Form_Save_btn").click(function () {
+                let isValid = true;
+                let formData = {};
+                $("#From input,select,textarea").each(function () {
+                    var inputName = $(this).attr('name');
+                    var inputValue = "";
+                    if ($(this).find('textarea').lenght) {
+                        inputValue = $(this).text();
+                    } else {
+                        inputValue = $(this).val();
+                    }
+                    var mandatoryfields = ["BrchName", "BrchAddr", "BrchCity", "StateId",];
+                    var inputElement = $("#" + inputName);
+                    var inputId = inputElement.attr('id');
+                    var labelText = $("label[for='" + inputId + "']").text();
+                    if (mandatoryfields.includes(inputName) && inputValue === "") {
+                        if (inputElement.hasClass("select2-hidden-accessible")) {
+                            inputElement.next('.select2-container').addClass("select2-error");
+                        } else {
+                            inputElement.addClass("border-danger");
+                        }
+                        isValid = false;
+                        notify("Please Fill " + labelText + " Details..!", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                        return false;
+                    } else {
+                        if (inputElement.hasClass("select2-hidden-accessible")) {
+                            inputElement.next('.select2-container').removeClass("select2-error");
+                        } else {
+                            inputElement.removeClass("border-danger");
+                        }
+                    }
+                    if (inputName !== undefined && inputName !== "" && inputName !== null) {
+
+                        formData[inputName] = inputValue;
+
+                    }
+                });
+                //Call Api
+                if (isValid && formData != "") {
+                    $.ajax({
+                        url: '@Url.Action("POSTDATA","BranchMaster")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: formData,
+                        success: function (response) {
+                            if (response !== "") {
+                                $("#Form_reset_btn").click()
+
+                                notify("Branch Added Succefully ..!", "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+                                $("#From")[0].reset();
+                                LoadTableData();
+                            }
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                }
+            })
+        }
+        //Region Update User
+        {
+            $("#Form_Update_btn").click(function () {
+                let isValid = true;
+                let formData = {};
+                $("#From input,select,textarea").each(function () {
+                    var inputName = $(this).attr('name');
+                    var inputValue = "";
+                    if ($(this).find('textarea').lenght) {
+                        inputValue = $(this).text();
+                    } else {
+                        inputValue = $(this).val();
+                    }
+                    var mandatoryfields = ["MenuName", "MenuUrl", "ParentMenuId"];
+                    var inputElement = $("#" + inputName);
+                    var inputId = inputElement.attr('id');
+                    var labelText = $("label[for='" + inputId + "']").text();
+                    if (mandatoryfields.includes(inputName) && inputValue === "") {
+                        if (inputElement.hasClass("select2-hidden-accessible")) {
+                            inputElement.next('.select2-container').addClass("select2-error");
+                        } else {
+                            inputElement.addClass("border-danger");
+                        }
+                        isValid = false;
+                        notify("Please Fill " + labelText + " Details..!", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                        return false;
+                    } else {
+                        if (inputElement.hasClass("select2-hidden-accessible")) {
+                            inputElement.next('.select2-container').removeClass("select2-error");
+                        } else {
+                            inputElement.removeClass("border-danger");
+                        }
+                    }
+                    if (inputName !== undefined && inputName !== "" && inputName !== null) {
+
+                        formData[inputName] = inputValue;
+
+                    }
+                });
+                //Call Api
+                if (isValid && formData !== "") {
+                    $.ajax({
+                        url: '@Url.Action("UPDATEDATA","BranchMaster")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: formData,
+                        success: function (response) {
+                            if (response.success) {
+                                $("#From")[0].reset();
+                                LoadTableData();
+                                HideBtn()
+                                $("#Form_reset_btn").click()
+
+                                notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+                            } else {
+                                notify("Error To Updating Data", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                            }
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                }
+            })
+        }
+        //Region Delete
+        {
+            $("#Form_Delete_btn").click(function () {
+                Delete($("#BrchId").val());
+            })
+            $(document).on("click", ".table_delete", function () {
+                var $row = $(this).closest("tr");
+                var id = $row.find('td.tbl_Main_ID').text();
+                Delete(id);
+            })
+        }
+        //Region Select Row Data
+        {
+            $(document).on("click", ".table_edit", function () {
+                var $row = $(this).closest("tr");
+                $row.addClass("active");
+                bindrecord($row)
+            })
+            function bindrecord($row) {
+                var rowObject = {};
+                $row.find('td').each(function (index) {
+                    var $td = $(this);
+                    var key = $td.closest('table').find('th').eq(index).text().trim().replace(/[.,()%\- ]/g, '');
+                    if ($td.find('input').length) {
+                        rowObject[key] = $td.find('input').val();
+                    }
+                    else if ($td.find('textarea').length) {
+                        rowObject[key] = $td.find('textarea').val();
+                    }
+                    else if ($td.find('img').length) {
+                        rowObject[key] = $td.find('img').attr("src");
+                    } else if ($td.find('select').length) {
+                        //  rowObject[key] = $td.find('select option:selected').text().trim();
+                        //  rowObject['TaxCodeval'] = $td.closest('tr').find('.Taxc option:selected').val();
+                        //  rowObject['UomEntryVal'] = $td.closest('tr').find('.Uomc1 option:selected').val();
+                    } else {
+                        rowObject[key] = $td.text().trim();
+                    }
+                });
+                $("#BrchId").val(rowObject.BranchId) 
+                $("#LocId").val(rowObject.LocId).trigger("change")
+                $("#IsActive").val(rowObject.Active)
+                $("#CntryId").val(rowObject.CntryId)
+                $("#BrchName").val(rowObject.BranchName)
+                $("#BrchCity").val(rowObject.City)
+                $("#CntryId").val(rowObject.CntryId).trigger("change")
+                $("#StateId").val(rowObject.StateId).trigger("change")
+                $("#BrchGSTINNo").val(rowObject.GSTINNo)
+                $("#BrchAddr").val(rowObject.Address)
+                $("#MenuPos").val(rowObject.MenuPos)
+                $("#CreatedBy").val(rowObject.CreatedBy)
+                $("#UpdatedBy").val(rowObject.UpdatedBy)
+                var UpdateDate = SplitDatebyspace(rowObject.UpdateDate)
+                $("#UpdateDate").val(UpdateDate)
+                var CreateDate = SplitDatebyspace(rowObject.CreateDate)
+                $("#CreateDate").val(CreateDate)
+                if (rowObject.Active == "Y") {
+                    $("#IsActive").prop("checked", true);
+                }
+                if (rowObject.Active == "N") {
+                    $("#IsActive").prop("checked", false);
+                }
+                ShowBtn()
+                $("#Create_User_Tab").click();
+            }
+        }
+        //Function to handle form reset
+        {
+            $("#Form_reset_btn").click(function () {
+                $(".Form_Elem").removeClass("border-danger");
+            });
+        }
+        //Function Btn Opration
+        {
+            $("#Form_reset_btn").click(function () { HideBtn() })
+            function ShowBtn() {
+                $("#Form_Delete_btn").show();
+                $("#Form_Update_btn").show();
+                $("#Form_Save_btn").hide();
+            }
+            function HideBtn() {
+                $("#Form_Save_btn").show();
+                $("#Form_Delete_btn").hide();
+                $("#Form_Update_btn").hide();
+            }
+        }
+        //region All functions
+        {
+            // Function to retrieve menu data
+            LoadTableData();
+            function LoadTableData() {
+                $.ajax({
+                    url: '@Url.Action("GET", "BranchMaster")', // Update with your API endpoint for retrieving menu data
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+
+                     ApplyDatatable(response, "Table")
+                      
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        console.error('Error:', error.responseText);
+                    }
+                });
+            }
+            //format date
+            function formatAndSetDate(inputDate) {
+                const parts = inputDate.split(' ');
+                const datePart = parts[0];
+                const timePart = parts[1];
+                const [day, month, year] = datePart.split('-');
+                const formattedDate = `${year}-${month}-${day}`;
+                const formattedDateTime = `${formattedDate} ${timePart}`;
+                return formattedDate;
+            }
+            function SplitDatebyspace(inputDate) {
+                const parts = inputDate.split(' ');
+                return parts[0];
+
+            }
+            //Apply Datatable
+            function ApplyDatatable(jsonData, Table_Id) {
+                if ($.fn.DataTable.isDataTable('#' + Table_Id)) {
+                    $('#' + Table_Id).DataTable().destroy();
+                }
+
+                $('#' + Table_Id).DataTable({
+                    scrollX: true,
+                    scrollY: '600px',
+                    scrollCollapse: true,
+                    autoWidth: false,
+                    fixedHeader: true,
+                    data: jsonData,
+                    columns: [
+                        {
+                            data: null,
+                            title: "Sr No",
+                            className: 'tbl_Sr_no no-wrap text-center',
+                            render: function (data, type, row, meta) {
+                                return meta.row + 1;
+                            }
+                        },
+                        {
+                            data: null,
+                            title: 'Action',
+                            className: '  text-center',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                return '<i class="fa fa-edit table_edit text-primary mr-1"></i> <i class="fa fa-trash text-danger mr-2  table_delete"></i>';
+                            }
+                        },
+                        {
+                            data: 'IsActive',
+                            title: 'Active',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                if (data == "Y") {
+                                    return `<center><label style="margin:0px!important; padding:0px!important;" class="tblswitch p-0 m-0">
+                                                                        <input type="checkbox" disabled value="`+ data + `" checked name="IsActive" class="tbltoggleSwitch form-control form-control-sm ">
+                                                                <span class="tblslider"></span>
+                                                                </label></center>`;
+                                } else {
+                                    return `<center><label class="tblswitch">
+                                                                            <input type="checkbox" disabled value="`+ data + `"  name="IsActive" class="tbltoggleSwitch form-control form-control-sm ">
+                                                                    <span class="tblslider"></span>
+                                                                </label></center>`;
+                                }
+
+                            }
+                        },
+                        { data: 'BrchId', title: 'Branch Id', className: 'tbl_BrchId d-none tbl_Main_ID' },
+                        { data: 'LocId', title: 'LocId', className: 'tbl_LocId d-none' },
+                        { data: 'LocCode', title: 'Location Code', className: 'tbl_LocCode text-center' },
+                        { data: 'LocName', title: 'Location Name', className: 'tbl_LocName' },
+                        { data: 'BrchName', title: 'Branch Name', className: 'tbl_Branch_Name' },
+                        { data: 'BrchAddr', title: 'Address', className: 'tbl_BrchAddr' },
+                        { data: 'CntryName', title: 'Country', className: 'tbl_CntryName ' },
+                        { data: 'StateName', title: 'State', className: 'tbl_StateName' },
+                        { data: 'BrchCity', title: 'City', className: 'tbl_BrchCity' },
+                        { data: 'BrchGSTINNo', title: 'GSTIN No', className: 'tbl_BrchGSTINNo' },
+                        { data: 'CntryId', title: 'CntryId', className: 'tbl_CntryId d-none' },
+                        { data: 'StateId', title: 'StateId', className: 'tbl_StateId d-none' },
+                        { data: 'CreatedBy', title: 'Created By', className: 'tbl_CreatedBy d-none' },
+                        { data: 'CreateDate', title: 'Create Date', className: 'tbl_CreateDate d-none' },
+                        { data: 'UpdatedBy', title: 'Updated By', className: 'tbl_UpdatedBy d-none' },
+                        { data: 'UpdateDate', title: 'Update Date', className: 'tbl_UpdateDate d-none' },
+                        // Add more columns as needed
+                    ],
+                    columnDefs: [
+                        {
+                            targets: '_all',
+                            className: 'dt-no-wrap',
+                            createdCell: function (td, cellData, rowData, row, col) {
+                                $(td).css('padding', '5px');
+                                $(td).attr('nowrap', 'nowrap');
+                            }
+                        }
+                    ],
+                    ordering: true,
+                    paging: true,
+                    retrieve: true,
+                    searching: true,
+                    responsive: true,
+                    colReorder: false,
+                    orderCellsTop: true,
+                });
+            }
+            //Delete
+            function Delete(ID) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This Branch Is Permanetly Delete Form System..!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    confirmButtonColor: 'red',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("DELETE","BranchMaster")',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: { Id: ID },
+                            success: function (response) {
+                                if (response.success) {
+                                    $("#From")[0].reset();
+                                    LoadTableData();
+                                    $("#Form_reset_btn").click()
+                                    HideBtn()
+                                    notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+                                    Swal.fire('Deleted!', 'Your data has been deleted.', 'success');
+                                } else {
+                                    notify("Error To Updating Data", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                                }
+                            },
+                            error: function (error) {
+                                notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                                console.error('Error:', error.responseText);
+                            }
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire('Cancelled', 'Your action has been cancelled.', 'error');
+                    }
+                });
+
+            }
+        }
+        // Region Navigation
+        {
+            var $table = $("#Table");
+            $table.find("tbody tr:first").addClass("active");
+            $(".btn_forward").click(function () {
+                var $currentRow = $table.find(".active");
+                var $nextRow = $currentRow.next("tr");
+                if ($nextRow.length > 0) {
+                    $currentRow.removeClass("active");
+                    $nextRow.addClass("active");
+                    bindrecord($nextRow);
+                } else {
+                    var $firstRow = $table.find("tbody tr:first");
+                    $table.find(".active").removeClass("active");
+                    $firstRow.addClass("active");
+                    bindrecord($firstRow);
+
+                }
+            });
+            $(".btn_backward").click(function () {
+                var $currentRow = $table.find(".active");
+                var $prevRow = $currentRow.prev("tr");
+                if ($prevRow.length > 0) {
+                    $currentRow.removeClass("active");
+                    $prevRow.addClass("active");
+                    bindrecord($prevRow);
+                } else {
+                    var $lastRow = $table.find("tr:last");
+                    $table.find(".active").removeClass("active");
+                    $lastRow.addClass("active");
+                    bindrecord($lastRow);
+                }
+            });
+            $(".btn_first").click(function () {
+                var $firstRow = $table.find("tbody tr:first");
+                $table.find(".active").removeClass("active");
+                $firstRow.addClass("active");
+                bindrecord($firstRow);
+            });
+            $(".btn_last").click(function () {
+                var $lastRow = $table.find("tr:last");
+                $table.find(".active").removeClass("active");
+                $lastRow.addClass("active");
+                bindrecord($lastRow);
+            });
+            $(".btn_reload").click(function () {
+                $("#From")[0].reset();
+                $("#Form_reset_btn").click();
+                HideBtn()
+            });
+        }
+        // //Bulk Post
+        // {
+        //     var objectsArray = []; // Initialize an empty array to store the parsed data
+
+        //     $('#Import').on('change', function () {
+        //         var file = this.files[0];
+        //         if (file) {
+        //             var reader = new FileReader();
+        //             reader.onload = function (e) {
+        //                 var data = new Uint8Array(e.target.result);
+        //                 var workbook = XLSX.read(data, { type: 'array' });
+        //                 var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        //                 var jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+        //                 if (jsonData.length > 0) {
+        //                     var headers = jsonData[0];
+        //                     var rows = jsonData.slice(1);
+        //                     objectsArray = rows.map(function (row) {
+        //                         var obj = {};
+        //                         row.forEach(function (cell, i) {
+        //                             obj[headers[i]] = cell;
+        //                         });
+        //                         return obj;
+        //                     });
+        //                 }
+        //             };
+        //             reader.readAsArrayBuffer(file);
+        //         }
+        //     });
+
+        //     $('#Upload_Xls').on('click', function () {
+        //         Loader()
+
+        //         $.ajax({
+        //             url: "@Url.Action("POSTDATAExcel", "BranchMaster")",
+        //             method: "POST",
+        //             data: { data: JSON.stringify(objectsArray) },
+        //             success: function (response) {
+        //                 if (response !== "") {
+        //                     var jsondata = JSON.parse(response);
+        //                     if (jsondata.length > 0) {
+        //                         createExcelFile(jsondata);
+        //                     } else {
+        //                         Swal.fire("Bulk Post Successfull...!", "", "success")
+        //                         LoadTableData();
+        //                     }
+        //                 }
+        //                 Loader()
+        //                 $('#Import').val("")
+        //             },
+        //             error: function (err) {
+        //                 console.log(err.responseText)
+        //                 Loader()
+        //             }
+        //         });
+        //     });
+
+        //     function createExcelFile(jsonData) {
+        //         const worksheet = XLSX.utils.json_to_sheet(jsonData);
+        //         // Create a new workbook
+        //         const workbook = XLSX.utils.book_new();
+        //         XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        //         // Convert workbook to binary string
+        //         const excelBuffer = XLSX.write(workbook, {
+        //             bookType: "xlsx",
+        //             type: "array"
+        //         });
+        //         // Create a blob from the binary string
+        //         const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+        //         // Create a download link and trigger the download
+        //         const link = document.createElement('a');
+        //         link.href = URL.createObjectURL(blob);
+        //         link.download = 'error_log.xlsx';
+        //         link.click();
+        //         // Clean up the URL object
+        //         URL.revokeObjectURL(link.href);
+        //     }
+        // }
+        // bulk Post
+        {
+            $('#DownloadTemplete').click(function () {
+                var value = 'Branch_Mst';
+                $.ajax({
+                    type: "get",
+                    url: "@Url.Action("GetHeader", "UnitMaster")",
+                    data: { data: value },
+                    contentType: "application/json; charset=utf-8",
+                    success: function (headerData) {
+                        var headers = [];
+
+                        // Populate headers array with column names and metadata
+                        for (var i = 0; i < headerData.length; i++) {
+                            var header = headerData[i].name;
+                            var dp_field_dname = headerData[i].name;
+                            var MYDATA_TYPE = headerData[i].dataType;
+                            var MYLength = headerData[i].maxLength;
+                            var headerText = `${dp_field_dname},(${MYDATA_TYPE}, ${MYLength})`;
+                            var tooltipText = '';
+                            if (header.includes('CntryId')) {
+                                tooltipText = "Tooltip for use Country Master Sheet for data use in " + header;
+                            }
+                            if (header.includes('StateId')) {
+                                tooltipText = "Tooltip for Use State Master sheet for data use in " + header;
+                            }
+                            if (header.includes('LocId')) {
+                                tooltipText = "Tooltip for Use Location Master sheet for data use in " + header;
+                            }
+                            var headerObj = {
+                                text: headerText,
+                                tooltip: tooltipText
+                            };
+
+                            headers.push(headerObj);
+                        }
+
+                        const worksheetData = [headers.map(header => header.text)];
+                        const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+                        const columnWidth = 30; // Set desired width (in characters)
+                        worksheet['!cols'] = headers.map(() => ({ width: columnWidth }));
+
+                        headers.forEach((header, index) => {
+                            if (header.tooltip) {
+                                const cellAddress = XLSX.utils.encode_cell({ r: 0, c: index });
+                                worksheet[cellAddress].c = [{
+                                    t: header.tooltip,
+                                    a: "system"
+                                }];
+                            }
+                        });
+
+                        const workbook = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(workbook, worksheet, 'Headers');
+
+                        // Create an array of AJAX calls
+                        const ajaxCalls = [
+                            { url: "@Url.Action("GET", "StateMaster")", sheetName: 'State Master' },
+                            { url: "@Url.Action("GET", "CountryMaster")", sheetName: 'Country Master' },
+                            { url: "@Url.Action("GET", "LocationMaster")", sheetName: 'Location Master' }
+
+                        ];
+
+                        // Function to process AJAX response and add sheets
+                        function addSheetToWorkbook(data, sheetName) {
+                            if (data.length > 0) {
+                                var columnNames = Object.keys(data[0]);
+                                var sheetData = [columnNames];
+                                for (var i = 0; i < data.length; i++) {
+                                    var row = [];
+                                    for (var j = 0; j < columnNames.length; j++) {
+                                        row.push(data[i][columnNames[j]]);
+                                    }
+                                    sheetData.push(row);
+                                }
+                                const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+                                worksheet['!cols'] = columnNames.map(() => ({ width: columnWidth }));
+                                XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+                            }
+                        }
+
+                        // Perform all AJAX calls
+                        $.when.apply($, ajaxCalls.map(call => $.ajax({
+                            type: "get",
+                            url: call.url,
+                            contentType: "application/json; charset=utf-8"
+                        })))
+                            .then(function (...responses) {
+                                responses.forEach((response, index) => {
+                                    addSheetToWorkbook(response[0], ajaxCalls[index].sheetName);
+                                });
+
+                                const excelBuffer = XLSX.write(workbook, {
+                                    bookType: 'xlsx',
+                                    type: 'array'
+                                });
+                                const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+                                const link = document.createElement('a');
+                                link.href = URL.createObjectURL(blob);
+                                link.download = `${value}.xlsx`; // Corrected filename format
+                                link.click();
+                                URL.revokeObjectURL(link.href);
+                            })
+                            .fail(function (err) {
+                                console.error('Error fetching data:', err);
+                            });
+                    },
+                    error: function (error) {
+                        console.error('Error fetching data:', error);
+                    }
+                });
+            });
+
+            $('#Upload_Xls').on('click', function () {
+                Loader();
+
+                var input = document.getElementById('Import');
+                var file = input.files[0];
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var data = new Uint8Array(e.target.result);
+                    let workbook = XLSX.read(data, { type: 'array' });
+                    let firstSheetName = workbook.SheetNames[0];
+                    let worksheet = workbook.Sheets[firstSheetName];
+                    let excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    let Eheaders = excelData[0];
+                    let headers = Eheaders.map(header => {
+                        // Split the header on ',' and take the first part
+                        return header.split(',')[0];
+                    });
+                    let rows = excelData.slice(1);
+                    let dataArray = rows.map(row => {
+                        let obj = {};
+                        row.forEach((cell, i) => {
+                            obj[headers[i]] = cell;
+                        });
+                        return obj;
+                    });
+                    $.ajax({
+                        url: "@Url.Action("POSTDATAExcel", "BranchMaster")",
+                        method: "POST",
+                        data: { data: JSON.stringify(dataArray) },
+                        success: function (response) {
+                            if (response !== "") {
+                                var jsondata = JSON.parse(response);
+                                if (jsondata.length > 0) {
+                                    createExcelFile(jsondata);
+                                } else {
+                                    Swal.fire("Bulk Post Successful...!", "", "success");
+                                    LoadTableData();
+                                }
+                            }
+                            Loader();
+                            $('#Import').val("");
+                        },
+                        error: function (err) {
+                            console.log(err.responseText);
+                            Loader();
+                        }
+                    });
+                };
+
+                reader.readAsArrayBuffer(file);
+            });
+
+            function createExcelFile(jsonData) {
+                const worksheet = XLSX.utils.json_to_sheet(jsonData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+                const excelBuffer = XLSX.write(workbook, {
+                    bookType: "xlsx",
+                    type: "array"
+                });
+                const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'error_log.xlsx';
+                link.click();
+                URL.revokeObjectURL(link.href);
+            }
+        }
+ // View excl sheet
+ {
+     $('.closeModalInstallments').click(function () {
+         $('#excelModal').modal('hide');
+         $('#CopyFromModal').modal('hide');
+     });
+
+     document.getElementById('ViewExcel').addEventListener('click', function () {
+         let fileInput = document.getElementById('Import');
+         let file = fileInput.files[0];
+         let fileName = file.name;
+         let baseName = fileName.split('.').slice(0, -1).join('.');
+         let reader = new FileReader();
+
+         reader.onload = function (e) {
+             let data = new Uint8Array(e.target.result);
+             let workbook = XLSX.read(data, { type: 'array' });
+             let firstSheetName = workbook.SheetNames[0];
+             let worksheet = workbook.Sheets[firstSheetName];
+
+             let excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+             let Eheaders = excelData[0];
+             let headers = Eheaders.map(header => header.split(',')[0]);
+
+             let rows = excelData.slice(1);
+             let dataArray = rows.map(row => {
+                 let obj = {};
+                 row.forEach((cell, i) => {
+                     obj[headers[i]] = cell;
+                 });
+                 return obj;
+             });
+
+             let table = document.getElementById('excelTable');
+             table.innerHTML = '';
+
+             let thead = document.createElement('thead');
+             let tr = document.createElement('tr');
+             headers.forEach(header => {
+                 let th = document.createElement('th');
+                 th.textContent = header;
+                 tr.appendChild(th);
+             });
+             thead.appendChild(tr);
+             table.appendChild(thead);
+
+             let tbody = document.createElement('tbody');
+             dataArray.forEach(row => {
+                 let tr = document.createElement('tr');
+                 headers.forEach(header => {
+                     let td = document.createElement('td');
+                     td.textContent = row[header];
+                     tr.appendChild(td);
+                 });
+                 tbody.appendChild(tr);
+             });
+             table.appendChild(tbody);
+
+             $('#excelTable').DataTable({
+                 ordering: true,
+                 paging: true,
+                 retrieve: true,
+                 searching: false,
+                 responsive: true,
+                 colReorder: false,
+                 orderCellsTop: false,
+                 scrollY: '300px', // Set the height for the scroll
+                 scrollX: true, // Enable horizontal scrolling if needed
+                 scrollCollapse: true, // Enable collapse of the scroll area
+                 paging: true, // Enable pagination
+                 fixedHeader: true // Keep the header fixed
+             });
+             $('#excelModal').modal('show');
+         };
+
+         reader.readAsArrayBuffer(file);
+     });
+
+    
+
+ }
+    });
+</script>
+
+
+
+

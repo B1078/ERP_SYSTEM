@@ -1,0 +1,419 @@
+﻿using ERP_System.Models.Setups;
+using ERP_System.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
+using System.Data;
+using ERP_System.Models.BusinessPartners;
+using Newtonsoft.Json;
+
+namespace ERP_System.Controllers.Setups
+{
+    public class WithHoldingTaxController : Controller
+    {
+        public IActionResult WithHoldingTax()
+        {
+            if (HttpContext.Session.GetString("User_Id") == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+        [HttpGet]
+        public IActionResult GETDATA()
+        {
+            try
+            {
+                string ConnectionString = HttpContext.Session.GetString("ConnectionString");
+                string Query = @"  select T1.LocName , 
+ T0.WTId  ,T0.WTCode ,T0.WTName ,T0.Rate ,CONVERT(varchar(10), T0.EffecDate , 105) as EffecDate,
+ T0.Category ,T0.BaseType ,T0.Section ,T0.LocId ,T0.ReturnType ,T0.TDSType ,T0.Assessee ,
+ T0.IsActive  ,T0.CreatedBy  ,T0.CreateDate  ,T0.CreateTS  ,T0.UpdatedBy  ,T0.UpdateDate  ,T0.UpdateTS  
+ From [WHT_mst] T0
+  left Join Location_Mst T1 on T1.LocId=T0.LocId  ";
+                List<Dictionary<string, object>> dataList = new List<Dictionary<string, object>>();
+                using (SqlConnection con = new SqlConnection(ConnectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(Query, con))
+                    {
+                        con.Open();
+                        cmd.CommandText = Query;
+                        cmd.CommandTimeout = 300;
+                        SqlDataReader rdr = cmd.ExecuteReader();
+                        {
+                            while (rdr.Read())
+                            {
+                                Dictionary<string, object> row = new Dictionary<string, object>();
+                                for (int i = 0; i < rdr.FieldCount; i++)
+                                {
+                                    string columnName = rdr.GetName(i);
+                                    object? value = rdr.IsDBNull(i) ? null : rdr.GetValue(columnName);
+                                    // Convert DATE values to string format without time
+                                    if (value is DateTime dateValue && dateValue.TimeOfDay == TimeSpan.Zero)
+                                    {
+                                        row[columnName] = dateValue.ToString("dd/MM/yyyy");
+                                    }
+                                    else
+                                    {
+                                        row[columnName] = value!;
+                                    }
+                                }
+                                dataList.Add(row);
+                            }
+                        }
+                        con.Close();
+                    }
+                }
+                return Json(dataList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message.ToString());
+            }
+        }
+        public IActionResult GETWTHOLDING(string id)
+        {
+            try
+            {
+                string ConnectionString = HttpContext.Session.GetString("ConnectionString");
+                string Query = @"Select * from [WHT_det] where WTId='"+id+"'";
+                List<Dictionary<string, object>> dataList = new List<Dictionary<string, object>>();
+                using (SqlConnection con = new SqlConnection(ConnectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(Query, con))
+                    {
+                        con.Open();
+                        cmd.CommandText = Query;
+                        cmd.CommandTimeout = 300;
+                        SqlDataReader rdr = cmd.ExecuteReader();
+                        {
+                            while (rdr.Read())
+                            {
+                                Dictionary<string, object> row = new Dictionary<string, object>();
+                                for (int i = 0; i < rdr.FieldCount; i++)
+                                {
+                                    string columnName = rdr.GetName(i);
+                                    object? value = rdr.IsDBNull(i) ? null : rdr.GetValue(columnName);
+                                    // Convert DATE values to string format without time
+                                    if (value is DateTime dateValue && dateValue.TimeOfDay == TimeSpan.Zero)
+                                    {
+                                        row[columnName] = dateValue.ToString("dd/MM/yyyy");
+                                    }
+                                    else
+                                    {
+                                        row[columnName] = value!;
+                                    }
+                                }
+                                dataList.Add(row);
+                            }
+                        }
+                        con.Close();
+                    }
+                }
+                return Json(dataList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message.ToString());
+            }
+        }
+        [HttpPost]
+        public ActionResult POSTDATAExcel(string data)
+        {
+            string connectionString = HttpContext.Session.GetString("ConnectionString");
+
+            try
+            {
+                TimeSpan currentTimeOfDay = DateTimeOffset.Now.TimeOfDay;
+                long ticks = Math.Max(0, Math.Min(currentTimeOfDay.Ticks, TimeSpan.MaxValue.Ticks));
+                List<Wtholding_mst> units = JsonConvert.DeserializeObject<List<Wtholding_mst>>(data);
+
+                if (units == null || !units.Any())
+                {
+                    return StatusCode(400, "Data is null or empty.");
+                }
+
+                Genrate_Query genrate = new Genrate_Query();
+                List<dynamic> errlist = new List<dynamic>();
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Open();
+
+                    foreach (var unit in units)
+                    {
+                        try
+                        {
+                            unit.UpdateDate = DateOnly.FromDateTime(DateTime.Now);
+                            unit.UpdateTS = TimeOnly.FromTimeSpan(new TimeSpan(ticks));
+                            unit.UpdatedBy = HttpContext.Session.GetString("UserName");
+                            unit.CreateTS = TimeOnly.FromTimeSpan(new TimeSpan(ticks));
+                            unit.CreateDate = DateOnly.FromDateTime(DateTime.Now);
+                            unit.CreatedBy = HttpContext.Session.GetString("UserName");
+
+                            string insertQuery = genrate.GenerateInsertQuery(unit, "[WHT_mst]", "WTId");
+
+                            using (SqlCommand cmd = new SqlCommand(insertQuery, con))
+                            {
+                                // Example: Assuming 'insertQuery' is parameterized properly. Adjust accordingly.
+                                cmd.CommandTimeout = 300;
+
+                                // You may add parameters here to avoid SQL Injection
+                                // e.g. cmd.Parameters.AddWithValue("@paramName", value);
+
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        catch (SqlException ex)
+                        {
+                            unit.errormessage = ex.Message;
+                            errlist.Add(unit);
+                        }
+                    }
+                }
+                string responce = JsonConvert.SerializeObject(errlist);
+                return StatusCode(200, responce);
+            }
+            catch (SqlException sqlEx)
+            {
+                // Log SQL exception details here
+                return StatusCode(500, $"SQL Error: {sqlEx.Message}");
+            }
+            catch (JsonSerializationException jsonEx)
+            {
+                // Log JSON serialization exception details here
+                return StatusCode(400, $"Data Parsing Error: {jsonEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Log general exception details here
+                return StatusCode(500, $"General Error: {ex.Message}");
+            }
+        }
+        public IActionResult POSTDATA(Wtholding_mst Data)
+        {
+            string ConnectionString = HttpContext.Session.GetString("ConnectionString");
+            string WTId = "";
+            try
+            {
+                TimeSpan currentTimeOfDay = DateTimeOffset.Now.TimeOfDay;
+                long ticks = Math.Max(0, Math.Min(currentTimeOfDay.Ticks, TimeOnly.MaxValue.Ticks));
+                Data.UpdateDate = DateOnly.FromDateTime(DateTime.Now.Date);
+                Data.UpdateTS = TimeOnly.FromTimeSpan(new TimeSpan(ticks));
+                Data.UpdatedBy = HttpContext.Session.GetString("UserName");
+                Data.CreateTS = TimeOnly.FromTimeSpan(new TimeSpan(ticks));
+                Data.CreateDate = DateOnly.FromDateTime(DateTime.Now.Date);
+                Data.CreatedBy = HttpContext.Session.GetString("UserName");
+                Genrate_Query genrate = new Genrate_Query();
+                string insertQuery = genrate.GenerateInsertQuery(Data, "[WHT_mst]", "WTId");
+                using (SqlConnection con = new SqlConnection(ConnectionString))
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(insertQuery, con))
+                    {
+                        cmd.CommandText = insertQuery;
+                        cmd.CommandTimeout = 300;
+                        cmd.ExecuteNonQuery();
+                        cmd.CommandText = "SELECT MAX(WTId) AS WTId FROM WHT_mst;";
+                        SqlDataReader rdr = cmd.ExecuteReader();
+                        {
+                            while (rdr.Read())
+                            {
+                                WTId = rdr["WTId"].ToString();
+                            }
+                        }
+                    }
+                    con.Close();
+
+                }
+                return Json(new { Success = true, LastId= WTId, Message = " With Holding Tax  Added Successfully..!" });
+            }
+            catch (SqlException sqlEx)
+            {
+                return StatusCode(500, "A  With Holding Tax  with this Code already exists. Please use a different Code.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred. Please try again later.");
+            }
+        }
+        public IActionResult SAVEWTHOLDING([FromBody] List<Wtholding_mst_def> Data)
+        {
+            string ConnectionString = HttpContext.Session.GetString("ConnectionString");
+
+        
+            try
+            {
+                TimeSpan currentTimeOfDay = DateTimeOffset.Now.TimeOfDay;
+                long ticks = Math.Max(0, Math.Min(currentTimeOfDay.Ticks, TimeOnly.MaxValue.Ticks));
+                foreach (var item in Data)
+                {
+                    if (item.WTDetId != "" && item.WTDetId != null)
+                    {
+
+                        Genrate_Query genrate = new Genrate_Query();
+                        string Query = genrate.GenerateUpdateQuery(item, "[WHT_det]", "WTDetId", item.WTDetId, "");
+                        if (item.WTDetId != null || item.WTDetId != "")
+                        {
+
+                            using (SqlConnection con = new SqlConnection(ConnectionString))
+                            {
+                                con.Open();
+                                using (SqlCommand cmd = new SqlCommand(Query, con))
+                                {
+                                    cmd.CommandTimeout = 300;
+                                    cmd.ExecuteNonQuery();
+
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        item.WTDetId = null;
+
+                        Genrate_Query genrate = new Genrate_Query();
+                        if (item.WTId != null || item.WTId != "")
+                        {
+                            string insertQuery = genrate.GenerateInsertQuery(item, "[WHT_det]", "WTDetId");
+                            using (SqlConnection con = new SqlConnection(ConnectionString))
+                            {
+                                con.Open();
+                                using (SqlCommand cmd = new SqlCommand(insertQuery, con))
+                                {
+                                    cmd.CommandTimeout = 300;
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+                        }
+                    }
+                }
+                return Json(new { Success = true, Message = "With holding  Added Successfully..!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message.ToString());
+            }
+
+        }
+        public IActionResult UPDATEDATA(Wtholding_mst Data)
+        {
+            string ConnectionString = HttpContext.Session.GetString("ConnectionString");
+            try
+            {
+                TimeSpan currentTimeOfDay = DateTimeOffset.Now.TimeOfDay;
+                long ticks = Math.Max(0, Math.Min(currentTimeOfDay.Ticks, TimeOnly.MaxValue.Ticks));
+                Data.UpdateDate = DateOnly.FromDateTime(DateTime.Now.Date);
+                Data.UpdateTS = TimeOnly.FromTimeSpan(new TimeSpan(ticks));
+                Data.UpdatedBy = HttpContext.Session.GetString("UserName");
+                Genrate_Query genrate = new Genrate_Query();
+                string Query = genrate.GenerateUpdateQuery(Data, "[WHT_mst]", "WTId", Data.WTId, "");
+                using (SqlConnection con = new SqlConnection(ConnectionString))
+                {
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand(Query, con))
+                    {
+                        cmd.CommandText = Query;
+                        cmd.CommandTimeout = 300;
+                        cmd.ExecuteNonQuery();
+                    }
+                    con.Close();
+
+                }
+                return Json(new { Success = true, LastId = Data.WTId, Message = " With Holding Tax Updated Successfully..!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message.ToString());
+            }
+        }
+        public IActionResult UPDATEHEDERDATA(string date, string rate,string WTId)
+        {
+            string ConnectionString = HttpContext.Session.GetString("ConnectionString");
+            try
+            {
+                string Query = @"UPDATE [WHT_mst] SET EffecDate = '" + date+"', Rate = '"+rate+"' WHERE WTId = '"+WTId+"'";
+
+                using (SqlConnection con = new SqlConnection(ConnectionString))
+                {
+                    con.Open();
+
+                    using (
+                        
+                        
+                        
+                        
+                        
+                        SqlCommand cmd = new SqlCommand(Query, con))
+                    {
+                        cmd.CommandText = Query;
+                        cmd.CommandTimeout = 300;
+                        cmd.ExecuteNonQuery();
+                    }
+                    con.Close();
+
+                }
+                return Json(new { Success = true, Message = " With Holding Tax Updated Successfully..!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message.ToString());
+            }
+        }
+
+        public IActionResult DELETE(string Id)
+        {
+            string ConnectionString = HttpContext.Session.GetString("ConnectionString");
+            try
+            {
+
+                string Query = "Delete from [WHT_mst] where WTId='" + Id + "'";
+                List<Dictionary<string, object>> dataList = new List<Dictionary<string, object>>();
+                using (SqlConnection con = new SqlConnection(ConnectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(Query, con))
+                    {
+                        con.Open();
+                        cmd.CommandText = Query;
+                        cmd.CommandTimeout = 300;
+                        cmd.ExecuteNonQuery();
+                        SqlDataReader rdr = cmd.ExecuteReader();
+                        con.Close();
+                    }
+                }
+                return Json(new { success = true, message = "With Holding Tax  Deleted Successfully..!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message.ToString());
+            }
+        }
+        public IActionResult DELETEWTHOLDING(string id)
+        {
+            string ConnectionString = HttpContext.Session.GetString("ConnectionString");
+            try
+            {
+
+                string Query = "Delete from [WHT_det] where WTDetId='" + id + "'";
+                List<Dictionary<string, object>> dataList = new List<Dictionary<string, object>>();
+                using (SqlConnection con = new SqlConnection(ConnectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(Query, con))
+                    {
+                        con.Open();
+                        cmd.CommandText = Query;
+                        cmd.CommandTimeout = 300;
+                        cmd.ExecuteNonQuery();
+                        SqlDataReader rdr = cmd.ExecuteReader();
+                        con.Close();
+                    }
+                }
+                return Json(new { success = true, message = "With Holding Tax  Deleted Successfully..!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message.ToString());
+            }
+        }
+    }
+}

@@ -1,0 +1,579 @@
+﻿
+<!--  Menu analytics start -->
+@{
+    string? UserName = ViewContext.HttpContext.Session.GetString("UserName");
+    DateTime currentDate = DateTime.Now;
+    string formattedDate = currentDate.ToString("dd-MM-yyyy");
+
+}
+
+<div class="col-xl-12 col-md-12">
+    <div class="card table-card">
+        <div class="card-header">
+            <h5 class="webtitle">Business Partners Address Details </h5>
+            <div class="card-header-right">
+                <ul class="list-unstyled card-option">
+                    <li><i class="fa fa-wrench open-card-option"></i></li>
+                    <li><i class="fa fa-window-maximize full-card"></i></li>
+                    <li><i class="fa fa-minus minimize-card"></i></li>
+                    <li><i class="fa fa-refresh reload-card"></i></li>
+                    <!-- <li hidden><i class="fa fa-trash close-card"></i></li> -->
+                </ul>
+            </div>
+        </div>
+        <div class="card-block shadow">
+            <!-- Row start -->
+            <div class="row p-2">
+                <div class="col-lg-12 col-xl-12">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" id="Create_Address_Tab" href="#Create_Address" role="tab">Create Business Partners Address Details</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#All_Address" role="tab">All Address Details</a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content tabs card-block">
+                        <div class="tab-pane active p-0 m-0 mt-2" id="Create_Address" role="tabpanel">
+                            <form id="Address_mst_Form" class="w-100 mt-4 p-4 border">
+                                <div class="row justify-content-end mt-1 mb-3">
+                                    <div class="col-auto">
+                                        <label class="switch">
+                                            <input type="checkbox" value="Y" checked name="IsActive" id="IsActive" class="toggleSwitch form-control form-control-sm">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row mt-2">
+                                    <input hidden name="BPAddrId" id="BPAddrId" value="" type="text" placeholder="BPAddr Id" class="form-control form-control-sm Address_Form_Elem" />
+                                    <!-- BP ID and Title -->
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="BPId">Business Partner </label>
+                                        <select  name="BPId" id="BPId" type="text" placeholder="BP ID" class="form-control form-control-sm  Address_Form_Elem"> </select>
+                                    </div>
+                                    <!-- Permanent Address, Address Type, GSTIN No -->
+
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="AddrType">Address Type</label>
+                                        <select   id="AddrType" name="AddrType" tabindex="14" class="form-control form-control-sm  Address_Form_Elem">
+                                            <option value="">Select Address Type</option>
+                                            <option value="B">Bill To</option>
+                                            <option value="S">Ship To</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="GSTINType">GSTIN Type</label>
+                                        <select id="GSTINType"  name="GSTINType" tabindex="14" class="form-control form-control-sm   Address_Form_Elem">
+                                            <option  value="">Select GSTIN Type</option>
+                                            <option value="0">Regular</option>
+                                            <option value="1">Standard</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="GSTINNo">GSTIN No</label>
+                                        <input tabindex="10" id="GSTINNo" name="GSTINNo" type="text" placeholder="GSTIN No" class="form-control GSTININPUT form-control-sm  Address_Form_Elem" />
+                                    </div>
+                                 </div>
+                                    <div class="row mt-3">
+                                        <!-- Address, Country, State, City -->
+                                        <div class="col-md-6 mt-1 mb-1">
+                                            <label for="Addr">Address</label>
+                                            <textarea style="height:103px;" name="Addr" id="Addr" type="text" class="form-control border form-control-sm Address_Form_Elem"></textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-6 mt-1 mb-1">
+                                                    <label for="CntryId">Country</label>
+                                                <select id="CntryId" name="CntryId" value="" tabindex="10" class="form-control form-control-sm  Address_Form_Elem">
+                                                        <option value="">Select Country</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 mt-1 mb-1">
+                                                    <label for="StateId">State</label>
+                                                <select id="StateId" name="StateId" value="" tabindex="11" class="form-control form-control-sm  Address_Form_Elem">
+                                                        <option value="">Select State</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 mt-1 mb-1">
+                                                    <label for="BPCity">City</label>
+                                                <input id="BPCity" type="text" name="BPCity" placeholder="City" tabindex="12" class="form-control form-control-sm Address_Form_Elem" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                <div class="row">
+                                    <div class="col-md-3 mt-1 mb-1 d-none">
+                                        <label for="UpdateDate">Updated On</label>
+                                        <input readonly name="UpdateDate" id="UpdateDate" value="@formattedDate" type="text" placeholder="dd/mm/yy" class="form-control form-control-sm Address_Form_Elem" />
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1  d-none">
+                                        <label for="UpdatedBy">Updated By</label>
+                                        <input readonly name="UpdatedBy" id="UpdatedBy" value="@UserName" type="text" placeholder="Updated By" class="form-control form-control-sm Address_Form_Elem" />
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1  d-none">
+                                        <label for="CreateDate">Created On</label>
+                                        <input readonly name="CreateDate" id="CreateDate" value="@formattedDate" type="text" placeholder="dd/mm/yy" class="form-control form-control-sm Address_Form_Elem" />
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1  d-none">
+                                        <label for="CreatedBy">Created By</label>
+                                        <input readonly name="CreatedBy" id="CreatedBy" value="@UserName" type="text" placeholder="Created By" class="form-control form-control-sm Address_Form_Elem" />
+                                    </div>
+                                    <!-- Buttons -->
+                                    <div class="col-md-12 mt-3">
+                                        <button type="button" id="Form_Delete_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm btn-danger">Delete</button>
+                                        <button type="button" id="Form_Update_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm text-white btn-info">Update</button>
+                                        <button type="button" id="Form_Save_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm btn-success">Save</button>
+                                        <button type="reset" id="Form_reset_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm btn-dark">Reset</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="tab-pane p-3" id="All_Address" role="tabpanel">
+                            <div class="row p-3 mt-2 border">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped table-hover w-100" id="Table">
+                                        <!-- Table Content Goes Here -->
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Row end -->
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        //Get Dropdown Data
+        {
+            // GET Country
+            $.ajax({
+                url: '@Url.Action("COUNTRY", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "<option value=''>Select Country</option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].CntryId + "'>" + response[i].CntryCode + "-" + response[i].CntryName + "</option>";
+                        }
+                        $("#CntryId").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+            // GET State
+            $.ajax({
+                url: '@Url.Action("STATE", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "<option value=''>Select State</option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].StateId + "'>" + response[i].StateCode + "-" + response[i].StateName + "</option>";
+                        }
+                        $("#StateId").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+            // Get businessparnerId with name
+            $.ajax({
+                url: '@Url.Action("BUSINESSPARTNER", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "<option value=''>Select Business Partner</option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].BPId + "'>" + response[i].BPCode + "-" + response[i].BPName + "</option>";
+                        }
+                        $("#BPId").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+        }
+        var dateOnly = "";
+        $("#DOB").change(function () {
+            dateOnly = "";
+            var dateString = $(this).val();
+            var dateAndTime = dateString.split(" ");
+            dateOnly = dateAndTime[0];
+        })
+        //Region Add User
+        {
+            $("#Form_Save_btn").click(function () {
+                let isValid = true;
+                let formData = {};
+                $("#Address_mst_Form input, select, textarea").each(function () {
+                    var inputName = $(this).attr('name');
+                    var inputValue = "";
+                    if ($(this).is('textarea')) {
+                        inputValue = $(this).val();
+                    } else {
+                        inputValue = $(this).val();
+                    }
+                    var mandatoryFields = ["AddrType", "BPId", "GSTINNo", "GSTINType"]; // Include GSTINType in mandatory fields
+                    if (mandatoryFields.includes(inputName) && inputValue === "") {
+                        $("#" + inputName).addClass("border-danger");
+                        isValid = false;
+                        notify("Please Fill All Mandatory Fields", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                        return false;
+                    } else {
+                        $("#" + inputName).removeClass("border-danger");
+                    }
+                    if (inputName !== undefined && inputName !== "" && inputName !== null) {
+                        formData[inputName] = inputValue;
+                    }
+                });
+                // Call Api
+                if (isValid && Object.keys(formData).length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("POSTDATA", "BPAddress")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: formData,
+                        success: function (response) {
+                            if (response !== "") {
+                                notify("Business Partners Address Details Added Successfully..!", "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+                                $("#Address_mst_Form")[0].reset();
+                                LoadTableData();
+                            }
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                }
+            });
+
+
+        }
+        //Region Update User
+        {
+            $("#Form_Update_btn").click(function () {
+                let isValid = true;
+                let formData = {};
+                $("#Address_mst_Form input,select,textarea").each(function () {
+                    var inputName = $(this).attr('name');
+                    var inputValue = "";
+                    if ($(this).find('textarea').lenght) {
+                        inputValue = $(this).text();
+                    } else {
+                        inputValue = $(this).val();
+                    }
+                    var mandatoryfields = [ "AddrType", "BPId", "GSTINNo", "AddrType"];
+                    if (mandatoryfields.includes(inputName) && inputValue === "") {
+                        $("#" + inputName).addClass("border-danger");
+                        isValid = false;
+                        notify("Please Fill All Mandatory Feilds", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                        return false;
+                    } else if (inputName === "DOB") {
+                        formData[inputName] = dateOnly;
+                    } else {
+                        $("#" + inputName).removeClass("border-danger");
+                    }
+                    if (inputName !== undefined && inputName !== "" && inputName !== null) {
+
+                        formData[inputName] = inputValue;
+
+                    }
+                });
+                //Call Api
+                if (isValid && formData !== "") {
+                    $.ajax({
+                        url: '@Url.Action("UPDATEDATA", "BPAddress")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: formData,
+                        success: function (response) {
+                            if (response.success) {
+                                $("#Address_mst_Form")[0].reset();
+                                LoadTableData();
+                                HideBtn()
+                                notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+                            } else {
+                                notify("Error To Updating Data", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                            }
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                }
+            })
+        }
+        //Region Delete
+        {
+            $("#Form_Delete_btn").click(function () {
+                Delete($("#BPAddrId").val());
+            })
+            $(document).on("click", ".table_delete", function () {
+                var $row = $(this).closest("tr");
+                var id = $row.find('td.tbl_Main_ID').text();
+                Delete(id);
+            })
+        }
+        //Region Select Row Data
+        {
+            $(document).on("click", ".table_edit", function () {
+                var $row = $(this).closest("tr");
+                var rowObject = {};
+                $row.find('td').each(function (index) {
+                    var $td = $(this);
+                    var key = $td.closest('table').find('th').eq(index).text().trim().replace(/[.,()%\- ]/g, '');
+                    if ($td.find('input').length) {
+                        rowObject[key] = $td.find('input').val();
+                    }
+                    else if ($td.find('textarea').length) {
+                        rowObject[key] = $td.find('textarea').val();
+                    }
+                    else if ($td.find('img').length) {
+                        rowObject[key] = $td.find('img').attr("src");
+                    } else if ($td.find('select').length) {
+                        //  rowObject[key] = $td.find('select option:selected').text().trim();
+                        //  rowObject['TaxCodeval'] = $td.closest('tr').find('.Taxc option:selected').val();
+                        //  rowObject['UomEntryVal'] = $td.closest('tr').find('.Uomc1 option:selected').val();
+                    } else {
+                        rowObject[key] = $td.text().trim();
+                    }
+                });
+                $("#BPAddrId").val(rowObject.BPAddrId)
+                $("#IsActive").val(rowObject.Active)
+                $("#BPId").val(rowObject.BPId)
+                $("#AddrType").val(rowObject.AddressType)
+                $("#GSTINNo").val(rowObject.GSTINNo)
+                $("#GSTINType").val(rowObject.GSTINType)
+                $("#Addr").val(rowObject.Address)
+                $("#BPCity").val(rowObject.City)
+                $("#CntryId").val(rowObject.Countryd)
+                $("#StateId").val(rowObject.State)
+
+                if (rowObject.Active == "Y") {
+                    $("#IsActive").prop("checked", true);
+                }
+                if (rowObject.Active == "N") {
+                    $("#IsActive").prop("checked", false);
+                }
+
+                ShowBtn()
+                $("#Create_Address_Tab").click();
+            })
+        }
+        //Function to handle form reset
+        {
+            $("#Form_reset_btn").click(function () {
+                $(".Address_Form_Elem").removeClass("border-danger");
+            });
+        }
+        //Function Btn Opration
+        {
+            $("#Form_reset_btn").click(function () { HideBtn() })
+            function ShowBtn() {
+                $("#Form_Delete_btn").show();
+                $("#Form_Update_btn").show();
+                $("#Form_Save_btn").hide();
+            }
+            function HideBtn() {
+                $("#Form_Save_btn").show();
+                $("#Form_Delete_btn").hide();
+                $("#Form_Update_btn").hide();
+            }
+        }
+
+        //region All functions
+        {
+            //format date
+            function formatAndSetDate(inputDate) {
+                const parts = inputDate.split(' ');
+                const datePart = parts[0];
+                const timePart = parts[1];
+                const [day, month, year] = datePart.split('-');
+                const formattedDate = `${year}-${month}-${day}`;
+                const formattedDateTime = `${formattedDate} ${timePart}`;
+                return formattedDate;
+            }
+            // Function to retrieve menu data
+            LoadTableData();
+            function LoadTableData() {
+                $.ajax({
+                    url: '@Url.Action("GETDATA", "BPAddress")', // Update with your API endpoint for retrieving menu data
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        ApplyDatatable(response, "Table")
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        console.error('Error:', error.responseText);
+                    }
+                });
+            }
+            //Apply Datatable
+            function ApplyDatatable(jsonData, Table_Id) {
+                if ($.fn.DataTable.isDataTable('#' + Table_Id)) {
+                    $('#' + Table_Id).DataTable().destroy();
+                }
+                var table = $('#' + Table_Id).DataTable({
+                    data: jsonData,
+                    columns: [
+                        {
+                            data: null,
+                            title: "Sr No",
+                            className: 'tbl_Sr_no no-wrap text-center',
+                            render: function (data, type, row, meta) {
+                                // 'meta.row' gives the index of the row
+                                return meta.row + 1;
+                            }
+                        },
+                        {
+                            data: null,
+                            title: 'Action',
+                            className: 'text-center',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                return '<center><i class="fa fa-edit table_edit text-primary mr-1"></i> <i class="fa fa-trash text-danger mr-2  table_delete"></i></center>';
+                            }
+                        },
+                        {
+                            data: 'IsActive',
+                            title: 'Active',
+                            className: 'text-center',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                if (data == "Y") {
+                                    return `<center><label style="margin:0px!important; padding:0px!important;" class="tblswitch p-0 m-0">
+                                                                            <input type="checkbox" disabled value="`+ data + `" checked name="IsActive" class="tbltoggleSwitch form-control form-control-sm ">
+                                                                    <span class="tblslider"></span>
+                                                                    </label></center>`;
+                                } else {
+                                    return `<center><label class="tblswitch">
+                                                                                <input type="checkbox" disabled value="`+ data + `"  name="IsActive" class="tbltoggleSwitch form-control form-control-sm ">
+                                                                        <span class="tblslider"></span>
+                                                                    </label></center>`;
+                                }
+
+                            }
+                        },
+
+                        { data: 'BPName', title: 'Name', className: 'tbl_BPName' },
+                        { data: 'BPCode', title: 'Code', className: 'tbl_BPCode' },
+                        { data: 'BPAddrId', title: 'BPAddrId', className: 'tbl_Main_ID text-center d-none' },
+                        { data: 'BPId', title: 'BP Id', className: 'tbl_BPId text-center d-none' },
+                        {
+                            data: 'AddrType',
+                            title: 'Address Type',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                if (data == "B") {
+                                    return `<center>Bill To</center>`;
+                                } else {
+                                    return `<center>Ship To</center>`;
+                                }
+
+                            }
+                        },
+
+                        { data: 'AddrType', title: 'Address Type', className: 'tbl_AddrType text-center d-none' },
+                        {
+                            data: 'GSTINType',
+                            title: 'GSTIN Type',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                if (data == "1") {
+                                    return `<center>Standard</center>`;
+                                } else {
+                                    return `<center>Regular</center>`;
+                                }
+
+                            }
+                        },
+
+                        { data: 'GSTINType', title: 'GSTIN Type', className: 'tbl_GSTINType text-center d-none' },
+                        { data: 'GSTINNo', title: 'GSTIN No', className: 'tbl_GSTINNo text-center' },
+                        { data: 'Addr', title: 'Address', className: 'tbl_Addr text-center' },
+                        { data: 'CntryName', title: 'Country Name ', className: 'tbl_CntryName ' },
+                        { data: 'StateName', title: 'State Name', className: 'tbl_StateName' },
+                        { data: 'BPCity', title: 'City', className: 'tbl_BPCity text-center' },
+                        { data: 'CntryId', title: 'Countryd', className: 'tbl_CntryId text-center d-none' },
+                        { data: 'StateId', title: 'State', className: 'tbl_StateId text-center d-none' },
+                    ],
+                    "columnDefs": [
+                        { "targets": '_all', "className": 'dt-no-wrap' }
+                    ],
+                    ordering: false,
+                    paging: true,
+                    retrieve: true,
+                    searching: true,
+                    responsive: true,
+                    colReorder: false,
+                });
+            }
+            //Delete
+            function Delete(ID) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This Business Partner Contact Details Is Permanetly Delete Form system..!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    confirmButtonColor: 'red',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("DELETE", "BPAddress")',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: { Id: ID },
+                            success: function (response) {
+                                if (response.success) {
+                                    $("#Address_mst_Form")[0].reset();
+                                    LoadTableData();
+                                    HideBtn()
+                                    notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+                                    Swal.fire('Deleted!', 'Your data has been deleted.', 'success');
+                                } else {
+                                    notify("Error To Updating Data", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                                }
+                            },
+                            error: function (error) {
+                                notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                                console.error('Error:', error.responseText);
+                            }
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire('Cancelled', 'Your action has been cancelled.', 'error');
+                    }
+                });
+
+            }
+        }
+    });
+</script>
+
+
+

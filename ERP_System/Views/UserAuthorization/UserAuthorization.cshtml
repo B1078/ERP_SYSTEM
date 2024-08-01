@@ -1,0 +1,418 @@
+﻿<style>
+	.table-responsive {
+		max-height: 600px;
+		overflow-y: inherit;
+	}
+
+	td {
+		height: 10px !important;
+		padding: 3px !important;
+		margin: 0px !important;
+	}
+	th{
+		padding: 15px !important;
+		margin: 0px !important;
+		font-weight:bold;
+		
+	}
+	thead{
+		position: sticky;
+		top: 0px;
+		
+		background-color:white;
+		margin:0px!important;
+		height: 16px !important;
+	}
+	.AythtypeDropdown{
+	  border:1px solid gray!important;
+	}
+</style>
+<div class="col-xl-12 col-md-12">
+	<div class="card table-card">
+		<div class="card-header">
+			<h5 class="webtitle">User Authorization</h5>
+			<div class="card-header-right">
+				<ul class="list-unstyled card-option">
+					<li><i class="fa fa fa-wrench open-card-option"></i></li>
+					<li><i class="fa fa-window-maximize full-card"></i></li>
+					<li><i class="fa fa-minus minimize-card"></i></li>
+					<li><i class="fa fa-refresh reload-card"></i></li>
+					<li hidden><i class="fa fa-trash close-card"></i></li>
+				</ul>
+			</div>
+		</div>
+		<div class="card-block shadow p-4">
+			<!-- Row start -->
+			<div class="row ">
+				<div class='col-md-3'>
+					<label>Select User</label>
+					<select style="height:30px;" class="form-control form-control-sm border border-dark" id='User_List'>
+						<option value="">Select User</option>
+					</select>
+				</div>
+				<div class='col-md-6'></div>
+				<div class='col-md-3'>
+					<label>Select All</label>
+					<select style="height:30px;"  class='form-control form-control-sm  border border-dark SelectALL'><option selected value=''>Select All</option><option value='F'>Full</option><option value='R'>Readonly</option><option value='N'>None</option></select>
+				</div>
+				<div class="table-responsive mt-4">
+					<table class="table border  table-bordered  table-hover table-striped custom-table" id="permissionTable">
+						<thead>
+							<tr>
+								<th hidden class="">AuthMnuDetId</th>
+								<th class="d-none">Menu Id</th>
+								<th class="">Sr.No</th>
+								<th>Menu Name</th>
+								<th>Auth Type </th>
+							</tr>
+						</thead>
+						<tbody id='permissionTable_body'>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="row mt-3">
+				<div class="col-md-12 mt-3">
+					<button type="button" id="Form_Delete_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm btn-danger">Delete</button>
+					<button type="button" id="Form_Update_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm text-white btn-info">Update</button>
+					<button type="button" id="Form_Save_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm btn-success">Save</button>
+					<button type="reset" id="Form_reset_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm btn-dark">Reset</button>
+				</div>
+			</div>
+			<!-- Row end -->
+		</div>
+	</div>
+</div>
+<script>
+	$(document).ready(function () {
+
+		//Select All
+		{
+			$(".SelectALL").on('change',function(){
+				 var val =$(this).val();
+				 if(val==""){
+					$(".AythtypeDropdown").val("N");
+				   return false;
+				 }
+				 if(val =="F")
+				 {
+					$(".AythtypeDropdown").val("F");
+				 }
+				 else if(val=="R")
+				 {
+					$(".AythtypeDropdown").val("R");
+				 }
+				 else
+				 {
+					$(".AythtypeDropdown").val("N");
+			   	 }
+			})
+		}
+		//Regin Form Load
+		{
+			var mandatoryfields = [];
+			// GET User Type Data
+			$.ajax({
+				url: '@Url.Action("GETMINOTARY","UserAuthorization")',
+				type: 'GET',
+				dataType: 'json',
+				success: function (response) {
+					if (response.length > 0) {
+						for (var i = 0; i < response.length; i++) {
+							mandatoryfields.push(response[i].FieldName)
+						}
+					}
+				},
+				error: function (error) {
+					notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+					console.error('Error:', error.responseText);
+				}
+			});
+
+			$.ajax({
+				type: 'GET',
+				url: '@Url.Action("USERS","GetDropdownData")',
+				success: function (data) {
+					if (data.lenght <= 0) {
+						notify("No User Found Please Create User", "", "top", "right", "fa fa-warning mr-2", "warning", "animated fadeInRight", "animated fadeOutRight")
+					}
+					$("#User_List").html("");
+					$("#User_List").append("<option value=''>Select User</option>");
+					for (let i = 0; i < data.length; i++) {
+						var option = "";
+						option = "<option value='" + data[i].UserId + "'>" + data[i].UserName + "</option>"
+						$("#User_List").append(option);
+					}
+				},
+				error: function (error) {
+					notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+					console.error('Error:', error.responseText);
+				}
+			});
+		}
+		//Region Get Data List On User Change
+		{
+			$("#User_List").change(function () {
+				var Uid = $(this).val();
+				var User_type = $("#User_Type").val();
+				if (Uid == "") {
+					load_Table();
+					HideBtn()
+					return false;
+				}
+				$.ajax({
+				type: 'GET',
+				url: '@Url.Action("USERAUTHDATA","UserAuthorization")',
+				data: { id: Uid },
+				success: function (response) {
+					if (response.length == 0) {
+						load_Table();
+						HideBtn()
+						notify("No Authorization Found Please Create New One", "", "top", "right", "fa fa-warning mr-2", "primary", "animated fadeInRight", "animated fadeOutRight")
+					} else {
+						ShowBtn()
+						var tableBody = $("#permissionTable_body");
+						tableBody.empty();
+						$.each(response, function (index, item) {
+							var row = $("<tr>");
+							row.append("<td class='table-plus' hidden>" + item.AuthMnuDetId + "</td>");
+								row.append("<td hidden class='table-plus'>" + item.MenuID + "</td>");
+								row.append("<td  class='table-plus'>" + parseInt(index + 1) + "</td>");
+							row.append("<td class='table-plus'>" + item.MenuName + "</td>");
+							if (item.AuthType == "F") {
+								row.append("<td class='text-center p-1'><select style='height:25px;!important' class='form-control form-control-sm p-0 AythtypeDropdown'><option selected value='F'>Full</option><option value='R'>Readonly</option><option value='N'>None</option></select></td>");
+							}
+							else if (item.AuthType == "R") {
+									row.append("<td class='text-center p-1'><select style='height:25px;!important' class='form-control form-control-sm p-0 AythtypeDropdown'><option  value='F'>Full</option><option selected value='R'>Readonly</option><option value='N'>None</option></select></td>");
+							}
+							else{
+									row.append("<td class='text-center p-1'><select style='height:25px;!important' class='form-control form-control-sm p-0 AythtypeDropdown'><option  value='F'>Full</option><option  value='N'>None</option><option selected value='N'>None</option></select></td>");
+							}
+							tableBody.append(row);
+						});
+					}
+				},
+				error: function(error) {
+					notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+					console.error('Error:', error.responseText);
+				}
+			});
+			});
+		}
+		//Region Delete Authorization
+		{
+			$("#Form_Delete_btn").click(function () {
+			let uid = $("#User_List").val();
+			Swal.fire({
+				title: "Are you sure?",
+				text: "You won't be DELETE Authorization ...!",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Yes, DELETE it!"
+			}).then((result) => {
+				if (result.isConfirmed) {
+					$.ajax({
+						type: 'DELETE',
+						url: '@Url.Action("DELETEAUTHDATA","UserAuthorization")',
+						data: { id: uid },
+						success: function (response) {
+							if (response.success == true) {
+								notify(response.message, "", "top", "right", "fa fa-warning mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+								$("#User_List").val("");
+								load_Table();
+								HideBtn()
+							} else {
+								notify("Error To Delete  Authorization..!", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+
+							}
+						},
+						error: function (xhr, status, error) {
+							notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+							console.error('Error:', error.responseText);
+						}
+					});
+				}
+			})
+		})
+		
+		}
+		//Region Update Authorization
+		{
+			$("#Form_Update_btn").click(function () {
+				let data = [];
+				$('#permissionTable tbody tr').each(function () {  // Iterate through each table row
+					var $row = $(this);
+					var rowObject = {};
+					rowObject["UserId"] = $("#User_List").val();
+					rowObject["UserName"] = $("#User_List option:selected").text();
+					$row.find('td').each(function (index) {  // Iterate through each table cell
+						var $td = $(this);
+						var key = $td.closest('table').find('th').eq(index).text().trim().replace(/[.,()%\- ]/g, '');
+						if ($td.find('input').length) {
+							rowObject[key] = $td.find('input').val();
+						} else if ($td.find('textarea').length) {
+							rowObject[key] = $td.find('textarea').val();
+						} else if ($td.find('img').length) {
+							rowObject[key] = $td.find('img').attr("src");
+						} else if ($td.find('select').length) {
+							rowObject[key] = $td.find('select option:selected').val().trim();
+							// rowObject['TaxCodeval'] = $td.closest('tr').find('.Taxc option:selected').val();
+							// rowObject['UomEntryVal'] = $td.closest('tr').find('.Uomc1 option:selected').val();
+						} else {
+							if(key !=="MenuId")
+							{
+								rowObject[key] = $td.text().trim();
+							}
+						}
+					});
+					data.push(rowObject);
+				});
+				var Userid = $("#User_List").val();
+				if (Userid == "") {
+					notify("Plese Select User first", "", "top", "right", "fa fa-warning mr-2", "info", "animated fadeInRight", "animated fadeOutRight")
+					return false;
+				}
+				Swal.fire({
+					title: "Are you sure?",
+					text: "You won't be Update Authorization ...!",
+					icon: "warning",
+					showCancelButton: true,
+					confirmButtonColor: "#3085d6",
+					cancelButtonColor: "#d33",
+					confirmButtonText: "Yes, Update it!"
+				}).then((result) => {
+					if (result.isConfirmed) {
+						$.ajax({
+							type: 'POST',
+							url: '@Url.Action("UPDATEAUTHORIZATION","UserAuthorization")',
+							data: { Maindata: data },
+							success: function (response) {
+								if (response.success == true) {
+									notify(response.message, "", "top", "right", "fa fa-warning mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+									$("#User_List").val("");
+									load_Table();
+									$("#Form_reset_btn").click()
+									HideBtn()
+									$(".SelectALL").val("N")
+								} else {
+									notify("Error To Update  Authorization..!", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+								}
+							},
+							error: function (error) {
+								notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+								console.error('Error:', error.responseText);
+							}
+						});
+					}
+				})
+		     })
+		}
+		//Region Add Authorization
+		{
+			$('#Form_Save_btn').click(function (event) {
+				let data = [];
+				$('#permissionTable tbody tr').each(function () {  // Iterate through each table row
+					var $row = $(this);
+					var rowObject = {};
+					rowObject["UserId"] = $("#User_List").val();
+					rowObject["UserName"] = $("#User_List option:selected").text();
+					$row.find('td').each(function (index) {  // Iterate through each table cell
+						var $td = $(this);
+						var key = $td.closest('table').find('th').eq(index).text().trim().replace(/[.,()%\- ]/g, '');
+						if ($td.find('input').length) {
+							rowObject[key] = $td.find('input').val();
+						} else if ($td.find('textarea').length) {
+							rowObject[key] = $td.find('textarea').val();
+						} else if ($td.find('img').length) {
+							rowObject[key] = $td.find('img').attr("src");
+						} else if ($td.find('select').length) {
+							rowObject[key] = $td.find('select option:selected').val().trim();
+							// rowObject['TaxCodeval'] = $td.closest('tr').find('.Taxc option:selected').val();
+							// rowObject['UomEntryVal'] = $td.closest('tr').find('.Uomc1 option:selected').val();
+						} else {
+							rowObject[key] = $td.text().trim();
+						}
+					});
+					data.push(rowObject);
+				});
+				
+				var Userid = $("#User_List").val();
+				if (Userid == "") {
+					notify("Plese Select User first", "", "top", "right", "fa fa-warning mr-2", "info", "animated fadeInRight", "animated fadeOutRight")
+					return false;
+				}
+				$.ajax({
+					type: 'POST',
+					url: '@Url.Action("ADDAUTHORIZATION","UserAuthorization")',
+					data: { Maindata: data },
+					success: function (response) {
+						if (response.success == true) {
+							notify(response.message, "", "top", "right", "fa fa-warning mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+							$("#User_List").val("");
+							load_Table();
+							$("#Form_reset_btn").click()
+							HideBtn()
+							$(".SelectALL").val("N")
+						} else {
+							notify("Error To Save  Authorization..!", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+
+						}
+					},
+					error: function (error) {
+						notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+						console.error('Error:', error.responseText);
+					}
+				});
+		     });
+		}
+		//Function Btn Opration
+		{
+			$("#Form_reset_btn").click(function () { HideBtn(); $("#User_List").val(""); $(".SelectALL").val(""); $(".AythtypeDropdown").val("N"); })
+			function ShowBtn() {
+				$("#Form_Delete_btn").show();
+				$("#Form_Update_btn").show();
+				$("#Form_Save_btn").hide();
+			}
+			function HideBtn() {
+				$("#Form_Save_btn").show();
+				$("#Form_Delete_btn").hide();
+				$("#Form_Update_btn").hide();
+			}
+		}
+		//Region All Functions
+		{
+			//Load Default Data List
+			load_Table()
+			function load_Table() {
+				$.ajax({
+					type: 'GET',
+					url: '@Url.Action("MENU_MST_DATA","UserAuthorization")',
+					success: function (response) {
+						if (response.lenght <= 0) {
+							notify("No Menus Found Please Create Menus", "", "top", "right", "fa fa-warning mr-2", "warning", "animated fadeInRight", "animated fadeOutRight")
+							return false;
+						}
+						var tableBody = $("#permissionTable_body");
+						tableBody.empty();
+						$.each(response, function (index, item) {
+							var row = $("<tr>");
+							row.append("<td class='table-plus' hidden></td>");
+							row.append("<td hidden class='table-plus '>" + item.MenuId + "</td>");
+							row.append("<td  class='table-plus '>" + parseInt(index + 1) + "</td>");
+							row.append("<td class='table-plus'>" + item.MenuName + "</td>");
+							row.append("<td class='text-center p-1'><select style='height:25px;!important' class='form-control AythtypeDropdown form-control-sm p-0'><option value='F'>Full</option><option value='R'>Readonly</option><option selected value='N'>None</option></select></td>");
+							tableBody.append(row);
+						});
+					},
+					error: function (xhr, status, error) {
+						notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+						console.error('Error:', error.responseText);
+					}
+				});
+			};
+		}
+
+	});
+</script>

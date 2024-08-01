@@ -1,0 +1,307 @@
+﻿
+<div class="col-xl-12 col-md-12">
+	<div class="card table-card">
+		<div class="card-header">
+			<h5 class="webtitle">Mandatory Field Setup</h5>
+			<div class="card-header-right">
+				<ul class="list-unstyled card-option">
+					<li><i class="fa fa fa-wrench open-card-option"></i></li>
+					<li><i class="fa fa-window-maximize full-card"></i></li>
+					<li><i class="fa fa-minus minimize-card"></i></li>
+					<li><i class="fa fa-refresh reload-card"></i></li>
+					<li hidden><i class="fa fa-trash close-card"></i></li>
+				</ul>
+			</div>
+		</div>
+		<div class="card-block shadow p-4">
+			<!-- Row start -->
+			<div class="row ">
+				<div class='col-md-3'>
+					<label>Select Menu</label>
+					<select style="height:30px;" class="form-control form-control-sm border border-dark" id='Menu_List'>
+						<option value="">Select Menu</option>
+					</select>
+				</div>
+				<div class='col-md-6'></div>
+				<div class='col-md-3'>
+					<label>Select Table</label>
+					<select style="height:30px;" class='form-control form-control-sm  border border-dark SelectALL'><option selected value=''>Select Table </option></select>
+				</div>
+				<div class="table-responsive mt-2 p-3">
+					<table class="table border  table-bordered  table-hover table-striped custom-table" id="fieldName_table">
+						<thead>
+							<tr>
+								<th class="text-center p-2">Sr.No</th>
+								<th class=" p-2">Field Name</th>
+								<th class="text-center p-2">Is Mandatory</th>
+								<th class="text-center p-2 MTMandId d-none">MTMandId</th>
+							</tr>
+						</thead>
+						<tbody id='permissionTable_body'>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="row mt-3">
+				<div class="col-md-12 mt-3">
+					<button type="button" id="Form_Delete_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm btn-danger">Delete</button>
+					<button type="button" id="Form_Update_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm text-white btn-info">Update</button>
+					<button type="button" id="Form_Save_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm btn-success">Save</button>
+					<button type="reset" id="Form_reset_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm btn-dark">Reset</button>
+				</div>
+			</div>
+			<!-- Row end -->
+		</div>
+	</div>
+</div>
+<script>
+	$(document).ready(function () {
+
+		//Regin Form Load
+		{
+			$.ajax({
+				type: 'GET',
+				url: '@Url.Action("MENU_MST_DATA", "MandatoryFieldSetup")',
+				success: function (data) {
+					if (data.lenght <= 0) {
+						notify("No User Found Please Create User", "", "top", "right", "fa fa-warning mr-2", "warning", "animated fadeInRight", "animated fadeOutRight")
+					}
+					$("#Menu_List").html("");
+					$("#Menu_List").append("<option value=''>Select Menu</option>");
+					for (let i = 0; i < data.length; i++) {
+						var option = "";
+						option = "<option value='" + data[i].MenuId + "'>" + data[i].MenuName + "</option>"
+						$("#Menu_List").append(option);
+					}
+				},
+				error: function (error) {
+					notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+					console.error('Error:', error.responseText);
+				}
+			});
+		}
+		$("#Menu_List").change(function () {
+			var selectedMenuId = $(this).val(); // Get the selected MenuId from Menu_List dropdown
+			// Check if a menu is selected
+			if (selectedMenuId) {
+				$.ajax({
+					type: 'GET',
+					url: '@Url.Action("GETTABLEDATA", "MandatoryFieldSetup")',
+					data: { id: selectedMenuId }, // Pass the selected menuId as data
+					success: function (data) {
+						var tableBody = $("#permissionTable_body");
+						tableBody.empty();
+						$(".SelectALL").html(""); // Clear existing options
+						$(".SelectALL").append("<option value=''>Select Table</option>");
+						// Populate the SelectALL dropdown with data from the server
+						for (let i = 0; i < data.length; i++) {
+							var option = "<option value='" + data[i].tablename + "'>" + data[i].tablename + "</option>"; // Adjust field names as needed
+							$(".SelectALL").append(option);
+						}
+						$(".SelectALL").trigger("change");
+					},
+					error: function (error) {
+						notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+						console.error('Error:', error.responseText);
+					}
+				});
+			}
+		});
+		$(".SelectALL").change(function () {
+			var selectedFieldName = $(this).val();
+			if (selectedFieldName) {
+				$.ajax({
+					type: 'GET',
+					url: '@Url.Action("TABLEDATA", "MandatoryFieldSetup")',
+					data: { id: selectedFieldName }, // Pass the selected field name as data
+					success: function (data) {
+						var tableBody = $("#permissionTable_body");
+						tableBody.empty(); // Clear existing table rows
+						for (let i = 0; i < data.length; i++) {
+							var row = $("<tr>");
+							// Append data to each column in the row
+							row.append("<td class='pt-2 text-center'>" + (i + 1) + "</td>");
+							row.append("<td class='pt-2 text-left'>" + data[i].COLUMN_NAME + "</td>");
+							if (data[i].IsMandatory == "Y") {
+								row.append(`
+								<td class='pt-2 text-center'>
+									<label class="tblswitch">
+										<input type="checkbox" value="Y" checked name="InvetoryLock" class="tbltoggleSwitch form-control form-control-sm" disabled>
+										<span class="tblslider"></span>
+									</label>
+								</td>
+							`);
+							} else {
+								row.append(`
+								<td class='pt-2 text-center'>
+									<label class="tblswitch">
+										<input type="checkbox" value="N" name="InvetoryLock" class="tbltoggleSwitch form-control form-control-sm">
+										<span class="tblslider"></span>
+									</label>
+								</td>
+							`);
+							}
+							row.append("<td class='pt-2 text-left d-none'>" + data[i].MTMandId + "</td>");
+							tableBody.append(row);
+						}
+					},
+					error: function (error) {
+						notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+						console.error('Error:', error.responseText);
+					}
+				});
+			}
+		});
+
+		//Region Delete Authorization
+		{
+			$("#Form_Delete_btn").click(function () {
+				let uid = $("#Menu_List").val();
+				Swal.fire({
+					title: "Are you sure?",
+					text: "You won't be DELETE Authorization ...!",
+					icon: "warning",
+					showCancelButton: true,
+					confirmButtonColor: "#3085d6",
+					cancelButtonColor: "#d33",
+					confirmButtonText: "Yes, DELETE it!"
+				}).then((result) => {
+					if (result.isConfirmed) {
+						$.ajax({
+							type: 'DELETE',
+							url: '@Url.Action("DELETEAUTHDATA", "MandatoryFieldSetup")',
+							data: { id: uid },
+							success: function (response) {
+								if (response.success == true) {
+									notify(response.message, "", "top", "right", "fa fa-warning mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+									$("#Menu_List").val("");
+									$('#Form_reset_btn').click()
+									load_Table();
+									HideBtn()
+								} else {
+									notify("Error To Delete  Authorization..!", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+
+								}
+							},
+							error: function (xhr, status, error) {
+								notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+								console.error('Error:', error.responseText);
+							}
+						});
+					}
+				})
+			})
+
+		}
+		
+		//Region Add Authorization
+		{
+			$('#Form_Save_btn').click(function (event) {
+				let data = [];
+				$('#fieldName_table tbody tr').each(function () {  // Iterate through each table row
+					var $row = $(this);
+					var rowObject = {};
+					rowObject["TableName"] = $(".SelectALL").val();
+					rowObject["MenuId"] = $("#Menu_List").val();
+					$row.find('td').each(function (index) {  // Iterate through each table cell
+						var $td = $(this);
+						var key = $td.closest('table').find('th').eq(index).text().trim().replace(/[.,()%\- ]/g, '');
+						if ($td.find('input').length) {
+							rowObject[key] = $td.find('input').val();
+						} else if ($td.find('textarea').length) {
+							rowObject[key] = $td.find('textarea').val();
+						}else if ($td.find('select').length) {
+							rowObject[key] = $td.find('select option:selected').val().trim();
+						} else {
+							rowObject[key] = $td.text().trim();
+						}
+					});
+					data.push(rowObject);
+				});
+				var Userid = $("#Menu_List").val();
+				if (Userid == "") {
+					notify("Plese Select Menu first", "", "top", "right", "fa fa-warning mr-2", "info", "animated fadeInRight", "animated fadeOutRight")
+					return false;
+				}
+				$.ajax({
+					type: 'POST',
+					url: '@Url.Action("POSTDATA", "MandatoryFieldSetup")',
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify(data),
+					success: function (response) {
+						if (response.success == true) {
+							var tableBody = $("#permissionTable_body");
+							tableBody.empty();
+							$('#Form_reset_btn').click()
+							$(".SelectALL").val("");
+							$("#Menu_List").val("");
+							notify(response.message, "", "top", "right", "fa fa-warning mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+							
+						} else {
+							notify("Error To Save  Authorization..!", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+
+						}
+					},
+					error: function (error) {
+						notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+						console.error('Error:', error.responseText);
+					}
+				});
+			});
+		}
+		//Function Btn Opration
+		{
+			$("#Form_reset_btn").click(function () {
+				HideBtn(); $("#Menu_List").val(""); $(".SelectALL").val(""); var tableBody = $("#permissionTable_body");
+				tableBody.empty();
+			})
+			function ShowBtn() {
+				$("#Form_Delete_btn").show();
+				$("#Form_Update_btn").show();
+				$("#Form_Save_btn").hide();
+			}
+			function HideBtn() {
+				$("#Form_Save_btn").show();
+				$("#Form_Delete_btn").hide();
+				$("#Form_Update_btn").hide();
+			}
+		}
+		//Region All Functions
+		{
+			//Load Default Data List
+			function load_Table() {
+				$.ajax({
+					type: 'GET',
+					url: '@Url.Action("MENU_MST_DATA", "MandatoryFieldSetup")',
+					success: function (response) {
+						if (response.length <= 0) {
+							notify("No Menus Found Please Create Menus", "", "top", "right", "fa fa-warning mr-2", "warning", "animated fadeInRight", "animated fadeOutRight")
+							return false;
+						}
+						var tableBody = $("#permissionTable_body");
+						tableBody.empty();
+						$.each(response, function (index, item) {
+							var row = $("<tr>");
+							row.append("<td class='table-plus' hidden></td>");
+							row.append("<td hidden class='table-plus '>" + item.MenuId + "</td>");
+							row.append("<td  class='table-plus '>" + parseInt(index + 1) + "</td>");
+							row.append("<td class='table-plus'>" + item.MenuName + "</td>");
+
+							row.append("<td class='table-plus'>" + item.MenuName + "</td>");
+							row.append("<td class='table-plus'>" + item.MenuName + "</td>");
+							tableBody.append(row);
+						});
+					},
+					error: function (xhr, status, error) {
+						notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+						console.error('Error:', error.responseText);
+					}
+				});
+			};
+
+
+		}
+
+	});
+</script>

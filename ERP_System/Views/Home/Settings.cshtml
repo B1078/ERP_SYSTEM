@@ -1,0 +1,327 @@
+﻿@{
+    string? authMenuData = ViewContext.HttpContext.Session.GetString("MenuData");
+    List<dynamic> menuList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<dynamic>>(authMenuData);
+    string? UserName = ViewContext.HttpContext.Session.GetString("UserName");
+}
+<style>
+    .colorPickerContainer {
+        background: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        width: 300px;
+        height: auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 10px;
+        position: relative;
+        z-index: 1000;
+    }
+
+    .colorPickerContainer .modal-content {
+        padding: 10px;
+    }
+
+    .colorPickerContainer input[type="color"] {
+        width: 100%;
+        height: 35px;
+        display: block;
+        margin: 0 auto;
+    }
+</style>
+<div class="main-body">
+    <div class="page-wrapper">
+        <!-- Page-body start -->
+        <div class="page-body">
+            <div class="row">
+                <!-- Material statustic card start -->
+                <div class="col-xl-6 col-md-12">
+                    <div class="card table-card">
+                        <div class="card-header">
+                            <h5>Dashboard Theme</h5>
+                            <div class="card-header-right">
+                                <ul class="list-unstyled card-option">
+                                    <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                                    <li><i class="fa fa-window-maximize full-card"></i></li>
+                                    <li><i class="fa fa-minus minimize-card"></i></li>
+                                    <li><i class="fa fa-refresh reload-card"></i></li>
+                                    <li><i class="fa fa-trash close-card"></i></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-block">
+                            <div class="table-responsive">
+                                <table class="table table-hover m-b-0 without-header">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="d-inline-block align-middle">
+                                                    <div class="d-inline-block">
+                                                        <a href="#" class="edit-color" data-color-type="NavigationBar" id="openNavBar">
+                                                            <h6 class="p-2">Navigation Bar color</h6>
+                                                        </a>
+                                                        <div id="colorPickerNavBar" class="colorPickerContainer" style="display: none;"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-inline-block align-middle">
+                                                    <div class="d-inline-block">
+                                                        <a href="#" class="edit-color" data-color-type="BackgroundColor" id="openBg">
+                                                            <h6 class="p-2">Background Color</h6>
+                                                        </a>
+                                                        <div id="colorPickerBg" class="colorPickerContainer" style="display: none;"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-inline-block align-middle">
+                                                    <div class="d-inline-block">
+                                                        <a href="#" class="edit-color" data-color-type="SidebarColor" id="openSidebar">
+                                                            <h6 class="p-2">Sidebar Color</h6>
+                                                        </a>
+                                                        <div id="colorPickerSidebar" class="colorPickerContainer" style="display: none;"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-inline-block align-middle">
+                                                    <div class="d-inline-block">
+                                                        <a href="#" class="edit-color" data-color-type="IconsColor" id="openIcons">
+                                                            <h6 class="p-2">Icons Color</h6>
+                                                        </a>
+                                                        <div id="colorPickerIcons" class="colorPickerContainer" style="display: none;"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-inline-block align-middle">
+                                                    <div class="d-inline-block">
+                                                        <a href="#" class="edit-color" data-color-type="FormCardColor" id="openFormCard">
+                                                            <h6 class="p-2">Form Card Color</h6>
+                                                        </a>
+                                                        <div id="colorPickerFormCard" class="colorPickerContainer" style="display: none;"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-inline-block align-middle">
+                                                    <div class="d-inline-block">
+                                                        <a href="#" class="edit-color" data-color-type="TextColor" id="openText">
+                                                            <h6 class="p-2">Text Color</h6>
+                                                        </a>
+                                                        <div id="colorPickerText" class="colorPickerContainer" style="display: none;"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-xl-6 col-md-12 card card-color">
+                    <div class="card-block shadow">
+                        <!-- Row start -->
+                        <div class="row p-2">
+                            <div class="col-lg-12 col-xl-12 ">
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs  tabs" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" id="Create_User_Tab" href="#Create_User" role="tab">Bank Charges Allocation Code </a>
+                                    </li> 
+
+                                </ul>
+                                <!-- Tab panes -->
+                                <div class="tab-content tabs card-block">
+                                    <div class="tab-pane active p-0 m-0 mt-2" id="Create_User" role="tabpanel">
+                                        <form id="Bank_allocation_form" class="w-100 mt-4 p-4 border">
+                                            <div class="row justify-content-start mt-1 mb-3 p-1">
+                                                <div class="col-md-6 col-lg-6">
+                                                    <label class="switch">
+                                                        <input type="checkbox" value="Y" checked name="IsActive" id="IsActive" class="toggleSwitch form-control form-control-sm">
+                                                        <span class="slider"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-md-3 mt-1 mb-1">
+                                                    <input name="BankAllCodeId" id="BankAllCodeId" type="text" hidden oninput="MaxLengthInp(this,100)" placeholder="BankAll CodeId" class="form-control form-control-sm Payment_terms_inp" />
+
+                                                    <label for="Code"> Code</label>
+                                                    <input name="Code" id="Code" type="text" oninput="MaxLengthInp(this,3)" placeholder=" Code" class="form-control form-control-sm Payment_terms_inp" />
+                                                </div>
+                                                <div class="col-md-3 mt-1 mb-1">
+                                                    <label for="Name"> Name</label>
+                                                    <input name="Name" id="Name" type="text" oninput="MaxLengthInp(this,20)" placeholder="Name" class="form-control form-control-sm Payment_terms_inp" />
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2 mb-2">
+                                                <div class="col-md-3 mt-1 mb-1 d-none ">
+                                                    <label for="UpdateDate">Updated On</label>
+                                                    <input readonly name="UpdateDate" id="UpdateDate" value="" type="text" placeholder="dd/mm/yy" class="form-control form-control-sm  UnitG_Elem" />
+                                                </div>
+                                                <div class="col-md-3 mt-1 mb-1 d-none ">
+                                                    <label for="UpdatedBy">Updated By</label>
+                                                    <input readonly name="UpdatedBy" id="UpdatedBy" value="@UserName" type="text" placeholder="Updated By" class="form-control form-control-sm  UnitG_Elem" />
+                                                </div>
+                                                <div class="col-md-3 mt-1 mb-1 d-none">
+                                                    <label for="CreateDate">Created On</label>
+                                                    <input readonly name="CreateDate" id="CreateDate" value="" type="text" placeholder="dd/mm/yy" class="form-control form-control-sm  UnitG_Elem" />
+                                                </div>
+                                                <div class="col-md-3 mt-1 mb-1 d-none">
+                                                    <label for="CreatedBy">Created By</label>
+                                                    <input readonly name="CreatedBy" id="CreatedBy" value="@UserName" type="text" placeholder="Created By" class="form-control form-control-sm  UnitG_Elem" />
+                                                </div>
+                                            </div>
+                                            <!-- Buttons -->
+                                            <div class="row mt-4 mb-2">
+                                                <div class="col-md-12 mt-3">
+                                                    <button type="button" id="Form_Delete_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm btn-danger">Delete</button>
+                                                    <button type="button" id="Form_Update_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm text-white btn-info">Update</button>
+                                                    <button type="button" id="Form_Save_btn" style="width:80px;" class="btn ml-1 mr-1 btn-sm btn-success">Save</button>
+                                                    <button type="reset" id="Form_reset_btn" style="width:80px;" class="btn ml-1 mr-1 btn-sm btn-dark">Reset</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Row end -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var colorSettings = {};
+        function openColorPicker(event, containerId) {
+            event.preventDefault();
+            $('.colorPickerContainer').hide();
+            var container = $(containerId);
+            if (container.children().length === 0) {
+                container.append(`
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Choose Color</h5>
+                            <button type="button" class="close" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="color" class="colorPicker" value="#ffffff">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary saveColorBtn">Save</button>
+                            <button type="button" class="btn btn-secondary closeColorPicker">Close</button>
+                        </div>
+                    </div>
+                `);
+            }
+            container.toggle();
+        }
+        $('#openNavBar').on('click', function (event) {
+            openColorPicker(event, '#colorPickerNavBar');
+        });
+
+        $('#openBg').on('click', function (event) {
+            openColorPicker(event, '#colorPickerBg');
+        });
+
+        $('#openSidebar').on('click', function (event) {
+            openColorPicker(event, '#colorPickerSidebar');
+        });
+
+        $('#openIcons').on('click', function (event) {
+            openColorPicker(event, '#colorPickerIcons');
+        });
+
+        $('#openFormCard').on('click', function (event) {
+            openColorPicker(event, '#colorPickerFormCard');
+        });
+
+        $('#openText').on('click', function (event) {
+            openColorPicker(event, '#colorPickerText');
+        });
+
+        $(document).on('click', '.saveColorBtn', function () {
+            var selectedColor = $(this).closest('.modal-content').find('.colorPicker').val();
+            var colorType = $(this).closest('.colorPickerContainer').prev().data('color-type');
+            applyChosenColor(colorType, selectedColor);
+            colorSettings[colorType] = selectedColor;
+            saveColorSettings(); 
+            $(this).closest('.colorPickerContainer').hide(); 
+        });
+
+        $(document).on('click', '.closeColorPicker, .close', function () {
+            $(this).closest('.colorPickerContainer').hide();
+        });
+
+        $(document).on('change', '.colorPicker', function () {
+            var chosenColor = $(this).val();
+            var colorType = $(this).closest('.colorPickerContainer').prev().data('color-type');
+            applyChosenColor(colorType, chosenColor);
+        });
+
+        function applyChosenColor(colorType, chosenColor) {
+            switch (colorType) {
+                case 'NavigationBar':
+                    $('.navbar.header-navbar.pcoded-header.iscollapsed').css('background-color', chosenColor);
+                    $('.pcoded .pcoded-navbar .pcoded-navigation-label[menu-title-theme="theme1"]').css('color', chosenColor);
+                    break;
+                case 'BackgroundColor':
+                    $('.pcoded-main-container').css('background-color', chosenColor);
+                    $('.pcoded .pcoded-navbar[active-item-theme="theme1"] .pcoded-item li.active > a')
+                        .css({
+                            'background-color': chosenColor,
+                            'color': '#fff'
+                        });
+                    $('.pcoded .pcoded-navbar[active-item-theme="theme1"] .pcoded-item li:hover > a')
+                        .css({
+                            'background-color': chosenColor,
+                            'color': '#fff'
+                        });
+                    break;
+                case 'SidebarColor':
+                    $('.mCSB_container').css('background-color', chosenColor);
+                    break;
+                case 'IconsColor':
+                    $('i').css('color', chosenColor);
+                    break;
+                case 'FormCardColor':
+                    $('.card').css('background-color', chosenColor);
+                    break;
+                case 'TextColor':
+                    $('label').css('color', chosenColor);
+                    $('p').css('color', chosenColor);
+                    $('h1').css('color', chosenColor);
+                    $('h2').css('color', chosenColor);
+                    $('h3').css('color', chosenColor);
+                    $('h4').css('color', chosenColor);
+                    $('h5').css('color', chosenColor);
+                    $('h6').css('color', chosenColor);
+                    $('th').css('color', chosenColor);
+                    break;
+            }
+        }
+        function saveColorSettings() {
+            localStorage.setItem('colorSettings', JSON.stringify(colorSettings));
+        }
+    });
+
+</script>

@@ -1,0 +1,152 @@
+﻿@{
+    string? authMenuData = ViewContext.HttpContext.Session.GetString("MenuData");
+    List<dynamic> menuList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<dynamic>>(authMenuData);
+    string? UserName = ViewContext.HttpContext.Session.GetString("UserName");
+}
+
+<div class="card table-card mt-2">
+    <div class="card-header">
+        <h5 class="webtitle">Profile</h5>
+        <div class="card-header-right">
+            <ul class="list-unstyled card-option">
+                <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                <li><i class="fa fa-window-maximize full-card"></i></li>
+                <li><i class="fa fa-minus minimize-card"></i></li>
+                <li><i class="fa fa-refresh reload-card"></i></li>
+                <li hidden><i class="fa fa-trash close-card"></i></li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-body shadow">
+        <!-- Row start -->
+        <div class="row p-2">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-header text-black text-center">Profile Picture</div>
+                    <div class="card-body text-center d-flex flex-column align-items-center">
+                        <img class="img-fluid rounded-circle mb-2" id="UserImage" src="" alt="User Profile Picture" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-9 col-lg-8 col-md-7 col-sm-12">
+                <div class="card h-100">
+                    <div class="card-header text-black text-center">Account Details</div>
+                    <div class="card-body" id="form">
+                        <form>
+                            <div class="row gx-3">
+                                <div class="col-md-4 mb-3">
+                                    <label class="medium text-dark" for="UserName">User Name</label>
+                                    <input class="form-control" id="UserName" type="text" placeholder="User Name" readonly/>
+                                </div>
+                                @* <div class="col-md-4 mb-3">
+                                    <label class="medium text-dark" for="UserPwd">Password</label>
+                                    <input class="form-control" id="UserPwd" type="text" placeholder="Password" />
+                                </div> *@
+                                <div class="col-md-4 mb-3">
+                                    <label class="medium text-dark" for="Roleid">User Role</label>
+                                    <input class="form-control" id="Roleid" type="text" placeholder="User Role" readonly />
+                                </div>
+                            </div>
+
+                            <div class="row gx-3">
+                                <div class="col-md-4 mb-3">
+                                    <label class="medium text-dark" for="UserFname">First Name</label>
+                                    <input class="form-control" id="UserFname" type="text" placeholder="First Name" readonly/>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="medium text-dark" for="UserMname">Middle Name</label>
+                                    <input class="form-control" id="UserMname" type="text" placeholder="Middle Name" readonly />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="medium text-dark" for="UserLname">Last Name</label>
+                                    <input class="form-control" id="UserLname" type="text" placeholder="Last Name" readonly />
+                                </div>
+                            </div>
+
+                            <div class="row gx-3">
+                                <div class="col-md-4 mb-3">
+                                    <label class="medium text-dark" for="UserGender">Gender</label>
+                                    <input class="form-control" id="UserGender" type="text" placeholder="Gender" readonly />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="medium text-dark" for="UserEmail">Email</label>
+                                    <input class="form-control" id="UserEmail" type="text" placeholder="Email" readonly />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="medium text-dark" for="UserMobno">Mobile Number</label>
+                                    <input class="form-control" id="UserMobno" type="text" placeholder="Mobile no" readonly />
+                                </div>
+                            </div>
+
+                            <div class="row gx-3">
+                                <div class="col-md-4 mb-3">
+                                    <label class="medium text-dark" for="UserDob">Date Of Birth</label>
+                                    <input class="form-control" id="UserDob" type="text" placeholder="Date Of Birth" readonly />
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="medium text-dark" for="dept_id">Department</label>
+                                    <input class="form-control" id="dept_id" type="text" placeholder="Department" readonly />
+                                </div>
+                            </div>
+
+                            <div class="row gx-3">
+                                <div class="col-md-6 mt-1 mb-1">
+                                    <label class="medium" for="UserAddr">Address</label>
+                                    <textarea class="from-control from-control-sm w-100" id="UserAddr" style="height:103px;" name="UserAddr" readonly></textarea>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-6 mt-1 mb-1">
+                                            <label class="medium" for="CntryId">Country</label>
+                                            <input id="CntryId" type="text" name="CntryId" placeholder="Country" tabindex="12" class="form-control form-control-sm Address_Form_Elem" readonly />
+                                        </div>
+                                        <div class="col-md-6 mt-1 mb-1">
+                                            <label class="medium" for="StateId">State</label>
+                                            <input id="StateId" type="text" name="StateId" placeholder="State" tabindex="12" class="form-control form-control-sm Address_Form_Elem" readonly />
+                                        </div>
+                                        <div class="col-md-6 mt-1 mb-1">
+                                            <label class="medium" for="UserCity">City</label>
+                                            <input id="UserCity" type="text" name="UserCity" placeholder="City" tabindex="12" class="form-control form-control-sm Address_Form_Elem" readonly />
+                                        </div>
+                                        <div class="col-md-6 mt-1 mb-1">
+                                            <label class="medium" for="BrchId">Branch</label>
+                                            <input id="BrchId" type="text" name="BrchId" placeholder="Branch" tabindex="12" class="form-control form-control-sm Address_Form_Elem" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Row end -->
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Get User Details
+        function LoadData() {
+            $.ajax({
+                url: "@Url.Action("UserData", "Home")",
+                method: "GET",
+                success: function (data) {
+                    if (data.length > 0) {
+                        var userData = data[0];
+                        for (var key in userData) {
+                            if (userData.hasOwnProperty(key)) {
+                                $("#" + key).val(userData[key]);
+                            }
+                        }
+                        $("#UserImage").attr("src", userData.UserImage).addClass("rounded-circle").attr("height", "190").attr("width", "210");
+                    }
+                },
+                complete: function () {
+                }
+            });
+        }
+        LoadData();
+    });
+</script>
+

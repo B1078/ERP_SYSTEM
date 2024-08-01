@@ -1,0 +1,1030 @@
+﻿@{
+    string? Cmp_Name = ViewContext.HttpContext.Session.GetString("cmp_name");
+    string? UserName = ViewContext.HttpContext.Session.GetString("UserName");
+    DateTime currentDate = DateTime.Now;
+    string formattedDate = currentDate.ToString("dd-MM-yyyy");
+}<!--  sale analytics start -->
+
+<div class="col-xl-12 col-md-12">
+    <div class="card table-card p-2 mb-0">
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn text-center btn-sm btn-primary btn_first p-2" title="Get First Document" style="width:50px; font-size:18px;">
+                    <i class="fa fa-arrow-circle-o-left"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary btn_backward p-2" title="Get Privious Record" style="width:50px; font-size:18px;">
+                    <i class="fas fa-long-arrow-alt-left"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary p-2 btn_forward" title="Get Next Record" style="width:50px; font-size:18px;">
+                    <i class="fas fa-long-arrow-alt-right"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary btn_last p-2" title="Get Last Document" style="width:50px; font-size:18px;">
+                    <i class="fa fa-arrow-circle-o-right"></i>
+                </button>
+                <button class="btn text-center btn-sm btn-primary btn_reload p-2" title="Reload" style="width:50px; font-size:18px;">
+                    <i class="fa fa-refresh"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card table-card mt-2">
+        <div class="card-header">
+            <h5 class="webtitle"> User</h5>
+            <div class="card-header-right">
+                <ul class="list-unstyled card-option">
+                    <li><i class="fa fa fa-wrench open-card-option"></i></li>
+                    <li><i class="fa fa-window-maximize full-card"></i></li>
+                    <li><i class="fa fa-minus minimize-card"></i></li>
+                    <li><i class="fa fa-refresh reload-card"></i></li>
+                    <li hidden><i class="fa fa-trash close-card"></i></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-block shadow">
+            <!-- Row start -->
+            <div class="row p-2">
+
+                <div class="col-lg-12 col-xl-12 ">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs  tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" id="Create_User_Tab" href="#Create_User" role="tab">Create User</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#All_Users" role="tab">All Users</a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content tabs card-block">
+                        <div class="tab-pane active p-0 m-0 mt-2" id="Create_User" role="tabpanel">
+                            <form id="User_Form" class="w-100 mt-4 p-4 border">
+                                
+                                  <div class="row mt-2">
+                                    <div class="col-md-12 text-right mt-1 mb-1">
+                                        <label class="switch">
+                                            <input type="checkbox" value="Y" checked name="IsActive" id="IsActive" class="toggleSwitch form-control form-control-sm ">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-12 mt-3 mb-2">
+                                        <label class="font-weight-bold"> User Credentials:</label>
+                                        <hr class="p-0 m-0 " />
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="UserName">User Name</label>
+                                        <input name="UserName" id="UserName" type="text" placeholder="User Name" class="form-control form-control-sm User_Form_Elem" />
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <div class="input-container">
+                                            <label for="UserPwd">Password</label>
+                                            <input name="UserPwd" class="form-control form-control-sm User_Form_Elem" id="UserPwd" type="password" placeholder="Password" />
+                                            <span for="" class="input-icon toggle-password">
+                                                <i class="fas fa-eye-slash"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label class="" for="Roleid">User Role</label>
+                                        <select name="Roleid" class="form-control  form-control-sm   User_Form_Elem" id="Roleid" value="">
+                                            <option value="">Select Role Type </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12 mt-3 mb-2">
+                                        <label class="font-weight-bold">Personal Details:</label>
+                                        <hr class="p-0 m-0 " />
+                                    </div>
+                                    <input hidden name="UserId" id="UserId" value="" type="text" placeholder="User Code" class="form-control form-control-sm User_Form_Elem" />
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="UserFname">First Name</label>
+                                        <input name="UserFname" id="UserFname" type="text" placeholder="First Name" class="form-control form-control-sm User_Form_Elem" />
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="UserMname">Middle Name</label>
+                                        <input name="UserMname" id="UserMname" type="text" placeholder="Middle Name" class="form-control form-control-sm User_Form_Elem" />
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="UserLname">Last Name</label>
+                                        <input name="UserLname" id="UserLname" type="text" placeholder="Last Name" class="form-control form-control-sm User_Form_Elem" />
+                                    </div>
+                                     <div class="col-md-3 mt-1 mb-1"></div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label class="" for="UserDob">Date Of Birth</label>
+                                        <input name="UserDob" type="date" class="form-control form-control-sm User_Form_Elem" id="UserDob" placeholder="dd/mm/yyyy" />
+                                    </div>
+                                   
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="UserGender">Gender</label>
+                                        <select  name="UserGender" class="form-control  form-control-sm User_Form_Elem" id="UserGender" value="">
+                                            <option value="">Select Gender</option>
+                                            <option value="M">Male</option>
+                                            <option value="F">Female</option>
+                                            <option value="O">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label for="UserImage">
+                                            User Picture
+                                        </label>
+                                        <div class="input-group p-0">
+                                            <input name="UserImage" id="Upload_Img" accept="image/*" type="file" class="form-control form-control-sm" placeholder="Choose File">
+                                            <img id="UserImage" src="" hidden class="form-control form-control-sm User_Form_Elem" />
+                                            <div class="input-group-append p-0">
+                                                <button data-bs-target="#exampleModalToggle" data-bs-toggle="modal" type="button" class="btn view btn-primary h-100 btn-sm" id="View">View</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1"></div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label class="" for="UserEmail">Email</label>
+                                        <input name="UserEmail" class="form-control MAILINPUT form-control-sm User_Form_Elem" id="UserEmail" type="email" placeholder="Email" />
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label class="" for="UserMobno">Mobile No</label>
+                                        <input name="UserMobno" class="form-control MONOINPUT form-control-sm User_Form_Elem" id="UserMobno" type="number" maxleght="10" placeholder="Mobile No" />
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1">
+                                        <label class="" for="dept_id">Department</label>
+                                        <select name="dept_id" class="form-control  form-control-sm   User_Form_Elem" id="dept_id" value="">
+                                            <option value="">Select Department </option>
+                                        </select>
+                                    </div>
+
+                                   
+                                   
+                                    <div class="col-md-12 mt-3 mb-2">
+                                        <label class="font-weight-bold">Address Details:</label>
+                                        <hr class="p-0 m-0 " />
+                                    </div>
+                                    <div class="col-md-6 mt-1 mb-1">
+                                        <label class="" for="UserAddr">Address</label><br />
+                                        <textarea class="from-control from-control-sm w-100" id="UserAddr" style="height:103px;" name="UserAddr"></textarea>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6 mt-1 mb-1">
+                                                <label class="" for="BrchId">Branch</label>
+                                                <select multiple style="height:50px!important;" name="BrchId" class="form-control border  form-select form-control-sm User_Form_Elem  Address_Form_Elem" id="BrchId" value="">
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mt-1 mb-1">
+                                                <label for="CntryId">Country</label>
+                                                <select id="CntryId" name="CntryId" value="" tabindex="10" class="form-control form-control-sm  Address_Form_Elem">
+                                                    <option value="">Select Country</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mt-1 mb-1">
+                                                <label for="StateId">State</label>
+                                                <select id="StateId" name="StateId" value="" tabindex="11" class="form-control form-control-sm  Address_Form_Elem">
+                                                    <option value="">Select State</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mt-1 mb-1">
+                                                <label for="UserCity">City</label>
+                                                <input id="UserCity" type="text" name="UserCity" placeholder="City" tabindex="12" class="form-control form-control-sm Address_Form_Elem" />
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-3 mt-1 mb-1 d-none">
+                                        <label for="UpdateDate">Updated On</label>
+                                        <input readonly name="UpdateDate" id="UpdateDate" value="@formattedDate" type="text" placeholder="dd/mm/yy" class="form-control form-control-sm User_Form_Elem" />
+                                    </div>
+                                    <div class="col-md-3 mt-1 mb-1 d-none">
+                                        <label for="UpdatedBy">Updated By</label>
+                                        <input readonly name="UpdatedBy" id="UpdatedBy" value="@UserName" type="text" placeholder="Updated By" class="form-control form-control-sm User_Form_Elem" />
+                                    </div>
+                                    <div class="col-md-12 mt-3">
+                                        <button type="button" id="Form_Delete_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm btn-danger">Delete</button>
+                                        <button type="button" id="Form_Update_btn" style="display:none; width:80px;" class="btn ml-1 mr-1 btn-sm text-white btn-info">Update</button>
+                                        <button type="button" id="Form_Save_btn" style=" width:80px;" class="btn ml-1 mr-1 btn-sm btn-success">Save</button>
+                                        <button type="reset"  id="Form_reset_btn"  style=" width:80px;"class="btn ml-1 mr-1 btn-sm btn-dark">Reset</button>
+                                    </div>
+                                 </div>
+                              </form>
+                        </div>
+                        <div class="tab-pane p-3" id="All_Users" role="tabpanel">
+                            <div class="row p-3  mt-2 border">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped   table-hover table-bordered w-100" cellspacing="0" cellpadding="0" border="1" id="User_Table">
+                                       
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Row end -->
+        </div>
+    </div>
+</div>
+<!-- Modal Form-->
+<div class="modal" id="DocumentViewer">
+    <div class="modal-content" style="height: 90vh; margin-top: 5vh;">
+        <div class="card-header bg-white border-0">
+            <span class="close closeModal" id="">&times;</span>
+        </div>
+        <div class="card-body viewerbody border p-2 text-center" style="overflow-y:scroll!important;overflow-x:scroll">
+            <div class=" pdfdocument-viewer w-100">
+            </div>
+            <div class=" image-container document-viewer document-viewer"></div>
+        </div>
+        <div class="card-footer">
+            <a class="downloadLink" style="display: none;"><button type="button" class="btn btn-primary">Download Document</button> </a>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script>
+    $(document).ready(function(){
+
+        $(".toggle-password").click(function () {
+            var passwordField = $("#UserPwd");
+            var passwordFieldType = passwordField.attr("type");
+
+            if (passwordFieldType === "password") {
+                passwordField.attr("type", "text");
+                $(".toggle-password i").removeClass("fas fa-eye-slash").addClass("fas fa-eye");
+            } else {
+                passwordField.attr("type", "password");
+                $(".toggle-password i").removeClass("fas fa-eye").addClass("fas fa-eye-slash");
+            }
+        });
+
+        //Get Dropdown Data
+        {
+            var mandatoryfields = [];
+            // GET User Type Data
+            $.ajax({
+                url: '@Url.Action("GETMINOTARY","User")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        for (var i = 0; i < response.length; i++) {
+                            mandatoryfields.push(response[i].FieldName)
+                        }
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            }); 
+            $.ajax({
+                url: '@Url.Action("GETDEPARTMENT","GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "<option value=''> Select User Type</option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].DeptId + "'>  " + response[i].DeptName + "</option>";
+                        }
+                        $("#dept_id").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+            // GET User Type Data
+            $.ajax({
+                url: '@Url.Action("USERROLL","GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "<option value=''> Select User Type</option>";
+                        for (var i = 0; i < response.length;i++){
+                            list += "<option value='" + response[i].Roleid + "'>  " + response[i].RoleName + "</option>";
+                        }
+                        $("#Roleid").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+            // GET Country
+            $.ajax({
+                url: '@Url.Action("COUNTRY", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "<option value=''>Select Country</option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].CntryId + "'>" + response[i].CntryCode + "-" + response[i].CntryName + "</option>";
+                        }
+                        $("#CntryId").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+            // GET State
+            $.ajax({
+                url: '@Url.Action("STATE", "GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "<option value=''>Select State</option>";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].StateId + "'>" + response[i].StateCode + "-" + response[i].StateName + "</option>";
+                        }
+                        $("#StateId").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+            //Get BRANCH Data
+            $.ajax({
+                url: '@Url.Action("BRANCH","GetDropdownData")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.length > 0) {
+                        let list = "";
+                        for (var i = 0; i < response.length; i++) {
+                            list += "<option value='" + response[i].BrchId + "'>" + response[i].BrchName + "</option>";
+                        }
+                        $("#BrchId").html(list);
+                    }
+                },
+                error: function (error) {
+                    notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                    console.error('Error:', error.responseText);
+                }
+            });
+        }
+        // Input Change Event
+        {
+            var inmagedata = [];
+            $("#Upload_Img").change(function () {
+                inmagedata = [];
+                var usrImageBase64 = "";
+                var fileInput = (this);
+                var file = fileInput.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function (event) {
+                        usrImageBase64 = event.target.result;
+                        if (usrImageBase64 !== "") {
+                            inmagedata.push(usrImageBase64)
+                            $("#UserImage").attr("src", usrImageBase64);
+                        } else {
+                            console.log("Image Not Found");
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    console.error("Error To Fetch Image");
+                }
+            })
+            var dateOnly = "";
+            $("#UserDob").change(function () {
+                dateOnly = "";
+                var dateString = $(this).val();
+                var dateAndTime = dateString.split(" ");
+                dateOnly = dateAndTime[0];
+            })
+        }
+
+        //View Image 
+        {
+
+            let fileObject = {};
+          
+            // Event listener for file input change
+            $('#Upload_Img').change(function () {
+                fileObject = {};
+                var fileInput = $(this)[0];
+                if (fileInput.files.length > 0) {
+                    var file = fileInput.files[0];
+                    var fileName = file.name;
+                    var fileExt = fileName.split('.').pop().toLowerCase(); // Extract extension and convert to lowercase
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var fileData = e.target.result;
+                        fileObject = {
+                            FileName: fileName,
+                            FileExt: fileExt,
+                            FileData: fileData,
+                            Base64Data: btoa(fileData)
+                        };
+                    };
+                    if (fileExt === 'xls' || fileExt === 'xlsx' || fileExt === 'csv' || fileExt === 'pdf') {
+                        reader.readAsBinaryString(file);
+                    } else {
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+            $(document).on("click", ".User_img", function () {
+                $("#DocumentViewer").fadeIn();
+            })
+
+            $(".view").click(function () {
+                $("#DocumentViewer").fadeIn();
+                // Display the content in the document-viewer div
+                var fileData = fileObject.FileData;
+                var fileExt = fileObject.FileExt;
+                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExt)) {
+                    var imageHtml = '<img src="' + fileData + '" />';
+                    $(".document-viewer").html(imageHtml);
+                    // Show download link
+                    var downloadLink = $('.downloadLink');
+                    downloadLink.attr('href', fileData);
+                    downloadLink.attr('download', fileObject.FileName);
+                    downloadLink.show();
+                }
+            });
+        }
+        //Region Add User
+        {
+            $("#Form_Save_btn").click(function () {
+                let isValid = true;
+                let formData = {};
+                $("#User_Form input, select, textarea").each(function () {
+                    var inputName = $(this).attr('name');
+                    var inputValue = "";
+                    if ($(this).is('textarea')) {
+                        inputValue = $(this).text();
+                    } else {
+                        inputValue = $(this).val();
+                    }
+
+                    var inputElement = $("#" + inputName);
+                    var inputId = inputElement.attr('id');
+                    var labelText = $("label[for='" + inputId + "']").text();
+
+                    // Validate mandatory fields
+                    if (mandatoryfields.includes(inputName) && (inputValue === "" || inputValue.length === 0)) {
+                        if (inputElement.hasClass("select2-hidden-accessible")) {
+                            inputElement.next('.select2-container').addClass("select2-error");
+                        } else {
+                            inputElement.addClass("border-danger");
+                        }
+                        isValid = false;
+                        notify("Please Fill " + labelText + " Details..!", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                        return false;
+                    } else {
+                        if (inputElement.hasClass("select2-hidden-accessible")) {
+                            inputElement.next('.select2-container').removeClass("select2-error");
+                        } else {
+                            inputElement.removeClass("border-danger");
+                        }
+                    }
+
+                    if (inputName !== undefined && inputName !== "" && inputName !== null) {
+                        if (inputName === "BrchId") {
+                            var resultString = inputValue.join(',');
+                            formData[inputName] = resultString;
+                        } else if (inputName === "UserImage") {
+                            var imgdata = $("#UserImage").attr("src");
+                            formData[inputName] = imgdata;
+                        } else if (inputName === "UserDob") {
+                            formData[inputName] = dateOnly;
+                        } else {
+                            formData[inputName] = inputValue;
+                        }
+                    }
+                });
+
+                // Call API
+                if (isValid && formData != "") {
+                    $.ajax({
+                        url: '@Url.Action("POSTDATA", "User")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: formData,
+                        success: function (response) {
+                            if (response != "") {
+                                $("#User_Form")[0].reset();
+                                getuser();
+                                $("#Form_reset_btn").click();
+                                HideBtn();
+                                notify("User Added Successfully..!", "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight");
+                            }
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight");
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                }
+            });
+        }
+
+        // //Region Add User
+        // {
+        
+        //     $("#Form_Save_btn").click(function(){
+        //         let isValid = true;
+        //         let formData = {};
+        //         $("#User_Form input,select,textarea").each(function () {
+        //             var inputName = $(this).attr('name')
+        //             var inputValue="";
+        //             if ($(this).find('textarea').lenght){
+        //                  inputValue = $(this).text();
+        //             }else{
+        //                inputValue = $(this).val();
+        //             }
+
+
+        //             var inputElement = $("#" + inputName);
+        //             var inputId = inputElement.attr('id');
+        //             var labelText = $("label[for='" + inputId + "']").text();
+        //             if (mandatoryfields.includes(inputName) && inputValue === "") {
+        //                 if (inputElement.hasClass("select2-hidden-accessible")) {
+        //                     inputElement.next('.select2-container').addClass("select2-error");
+        //                 } else {
+        //                     inputElement.addClass("border-danger");
+        //                 }
+        //                 isValid = false;
+        //                 notify("Please Fill " + labelText + " Details..!", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+        //                 return false;
+        //             } else {
+        //                 if (inputElement.hasClass("select2-hidden-accessible")) {
+        //                     inputElement.next('.select2-container').removeClass("select2-error");
+        //                 } else {
+        //                     inputElement.removeClass("border-danger");
+        //                 }
+        //             }
+        //             if (inputName !== undefined && inputName !== "" && inputName !== null) {
+        //                 if (inputName === "BrchId") {
+        //                     var resultString = inputValue.join(',');
+        //                     formData[inputName] = resultString;
+        //                 } else if (inputName === "UserImage") {
+        //                     var imgdata=$("#UserImage").attr("src");
+        //                     formData[inputName] = imgdata;
+        //                 } else if (inputName === "UserDob") {
+        //                     formData[inputName] = dateOnly;
+        //                 } else {
+        //                     formData[inputName] = inputValue;
+        //                 }
+        //             }
+        //         });
+        //         //Call Api
+        //         if (isValid && formData!="") {
+        //             $.ajax({
+        //                 url: '@Url.Action("POSTDATA","User")',
+        //                 type: 'POST',
+        //                 dataType: 'json',
+        //                 data: formData,
+        //                 success: function (response) {
+        //                     if (response != "") {
+        //                         $("#User_Form")[0].reset();
+        //                         getuser();
+        //                         $("#Form_reset_btn").click();
+        //                         HideBtn()
+        //                         notify("User Added Successfully..!", "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+        //                     }
+        //                 },
+        //                 error: function (error) {
+        //                     notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+        //                     console.error('Error:', error.responseText);
+        //                 }
+        //             });
+        //         }
+        //     })
+        // }
+        //Region Update User
+        {
+            $("#Form_Update_btn").click(function () {
+                let isValid = true;
+                let formData = {};
+                $("#User_Form input,select,textarea").each(function () {
+                    var inputName = $(this).attr('name')
+                    var inputValue = "";
+                    if ($(this).find('textarea').lenght) {
+                        inputValue = $(this).text();
+                    } else {
+                        inputValue = $(this).val();
+                    }
+                    var inputElement = $("#" + inputName);
+                    var inputId = inputElement.attr('id');
+                    var labelText = $("label[for='" + inputId + "']").text();
+                    if (mandatoryfields.includes(inputName) && inputValue === "") {
+                        if (inputElement.hasClass("select2-hidden-accessible")) {
+                            inputElement.next('.select2-container').addClass("select2-error");
+                        } else {
+                            inputElement.addClass("border-danger");
+                        }
+                        isValid = false;
+                        notify("Please Fill " + labelText + " Details..!", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                        return false;
+                    } else {
+                        if (inputElement.hasClass("select2-hidden-accessible")) {
+                            inputElement.next('.select2-container').removeClass("select2-error");
+                        } else {
+                            inputElement.removeClass("border-danger");
+                        }
+                    }
+                    if (inputName !== undefined && inputName !== "" && inputName !== null) {
+                        if (inputName === "BrchId") {
+                            var resultString = inputValue.join(',');
+                            formData[inputName] = resultString;
+                        } else if (inputName === "UserImage") {
+                            var imgdata = $("#UserImage").attr("src");
+                            formData[inputName] = imgdata;
+                        } else if (inputName === "UserDob") {
+                            formData[inputName] = dateOnly;
+                        } else {
+                            formData[inputName] = inputValue;
+                        }
+                    }
+                });
+                //Call Api
+                if (isValid && formData!=="") {
+                    $.ajax({
+                        url: '@Url.Action("UPDATEDATA","User")',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: formData,
+                        success: function (response) {
+                            if (response.success) {
+                                $("#User_Form")[0].reset();
+                                getuser();
+                                $("#Form_reset_btn").click();
+
+                                notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+                            }else{
+                                notify("Error To Updating Data", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                            }
+                        },
+                        error: function (error) {
+                            notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                            console.error('Error:', error.responseText);
+                        }
+                    });
+                }
+            })
+        }
+        //Region Delete User
+        {
+            $("#Form_Delete_btn").click(function () {
+                DeleteUser($("#UserId").val());
+            })
+            $(document).on("click", ".table_delete", function () {
+                var $row = $(this).closest("tr");
+                var userid = $row.find('td.tbl_usr_Id').text();
+                DeleteUser(userid);
+            })
+        }
+        // Function to handle form reset
+        $("#Form_reset_btn").click(function () {
+            $(".User_Form_Elem").removeClass("border-danger");
+        });
+        //Region Get User List
+        {
+            getuser()
+            function getuser(){
+                $.ajax({
+                    url: '@Url.Action("GETUSERDATA","User")',
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.length > 0) {
+
+                            ApplyDatatable(response, "User_Table")
+                        }
+                    },
+                    error: function (error) {
+                        notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                        console.error('Error:', error.responseText);
+                    }
+                });
+            }
+           
+        }
+      
+        //Region Select Row Data
+        {
+            $(document).on("click", ".table_edit",function () {
+                var $row = $(this).closest("tr");
+                $row.addClass("active");
+                bindrecord($row)
+            })
+            function bindrecord($row) {
+                var rowObject = {};
+                $row.find('td').each(function (index) {
+                    var $td = $(this);
+                    var key = $td.closest('table').find('th').eq(index).text().trim().replace(/[.,()%\- ]/g, '');
+                    if ($td.find('input').length) {
+                        rowObject[key] = $td.find('input').val();
+                    }
+                    else if ($td.find('textarea').length) {
+                        rowObject[key] = $td.find('textarea').val();
+                    }
+                    else if ($td.find('img').length) {
+                        rowObject[key] = $td.find('img').attr("src");
+                    } else if ($td.find('select').length) {
+                        //  rowObject[key] = $td.find('select option:selected').text().trim();
+                        //  rowObject['TaxCodeval'] = $td.closest('tr').find('.Taxc option:selected').val();
+                        //  rowObject['UomEntryVal'] = $td.closest('tr').find('.Uomc1 option:selected').val();
+                    } else {
+                        rowObject[key] = $td.text().trim();
+                    }
+                });
+                $("#UserId").val(rowObject.UserCode)
+                $("#IsActive").val(rowObject.Active)
+                $("#UserName").val(rowObject.UserName)
+                $("#UserId").val(rowObject.UserCode)
+                $("#UserPwd").val(rowObject.Password)
+
+
+                $("#UserFname").val(rowObject.FirstName)
+                $("#UserMname").val(rowObject.MiddleName)
+                $("#UserLname").val(rowObject.LastName)
+                $("#UserId").val(rowObject.User_Id)
+                $("#UserGender").val(rowObject.Gender).trigger("change")
+                $("#UserEmail").val(rowObject.Email)
+                $("#dept_id").val(rowObject.dept_id).trigger("change")
+
+                $("#UserMobno").val(rowObject.MobileNo)
+                $("#UserAddr").val(rowObject.Address)
+                $("#CntryId").val(rowObject.CntryId).trigger("change")
+                $("#StateId").val(rowObject.StateId).trigger("change")
+                $("#UserCity").val(rowObject.City)
+                $("#Roleid").val(rowObject.Roleid).trigger("change")
+                var value = rowObject.User_Branch_Id
+                if (value) { // Check if value is defined and not null or empty
+                    var array = value.split(",");
+                    $.each(array, function (index, item) {
+                        if (item) {
+                            $('#BrchId option[value="' + item + '"]').prop('selected', true).trigger("change")
+                        }
+                    });
+                } else {
+                    console.error("BrchId is undefined or null.");
+                }
+                $("#UserImage").attr("src", rowObject.UserPicture);
+                var imageHtml = '<img src="' + rowObject.UserPicture + '" />';
+                $(".document-viewer").html(imageHtml);
+                // Show download link
+                var downloadLink = $('.downloadLink');
+                downloadLink.attr('href', rowObject.UserPicture);
+                downloadLink.attr('download', 'Image');
+                downloadLink.show();
+                const formattedDate = formatAndSetDate(rowObject.Dob);
+                $("#UserDob").val(formattedDate)
+                if (rowObject.Active == "Y") {
+                    $("#IsActive").prop("checked", true);
+                }
+                if (rowObject.Active == "N") {
+                    $("#IsActive").prop("checked", false);
+                }
+                ShowBtn()
+                $("#Create_User_Tab").click();
+            }
+        }
+
+        //Function Btn Opration
+        {
+            $("#Form_reset_btn").click(function () { HideBtn() })
+            function ShowBtn(){
+                $("#Form_Delete_btn").show();
+                $("#Form_Update_btn").show();
+               $("#Form_Save_btn").hide();
+            }
+            function HideBtn(){
+                $("#Form_Save_btn").show();
+                $("#Form_Delete_btn").hide();
+                $("#Form_Update_btn").hide();
+            }
+        }
+        //All Functions
+        {
+            //format date
+            function formatAndSetDate(inputDate) {
+                const parts = inputDate.split(' ');
+                const datePart = parts[0];
+                const timePart = parts[1];
+                const [day, month, year] = datePart.split('-');
+                const formattedDate = `${year}-${month}-${day}`;
+                const formattedDateTime = `${formattedDate} ${timePart}`;
+                return formattedDate;
+            }
+            //Apply Datatable
+            function ApplyDatatable(jsonData, Table_Id) {
+                if ($.fn.DataTable.isDataTable('#' + Table_Id)) {
+                    $('#' + Table_Id).DataTable().destroy();
+                }
+                var table = $('#' + Table_Id).DataTable({
+                    scrollX: true,
+                    scrollY: '600px', // Adjust scrollY as needed
+                    responsive: true,
+                    "ordering": true,
+                    orderCellsTop: true,
+                    scrollCollapse: true,
+                    "columnDefs": [{
+                        "targets": '_all',
+                        "createdCell": function (td, cellData, rowData, row, col) {
+                            $(td).css('padding', '5px');
+                            $(td).css('white-space', 'nowrap'); // Prevent wrapping
+                        }
+                    }],
+                    bSort: true,
+                    bFilter: true,
+                    fixedHeader: true,
+                    autoWidth: false,
+                    data: jsonData,
+                   
+                    columns: [
+                        {
+                            data: null,
+                            title: "Sr No",
+                            className: 'tbl_Sr_no no-wrap text-center',
+                            render: function (data, type, row, meta) {
+                                // 'meta.row' gives the index of the row
+                                return meta.row + 1;
+                            }
+                        },
+                        {
+                            data: null,
+                            title: 'Action',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                return '<center><i class="fa fa-edit table_edit text-primary mr-1"></i> <i class="fa fa-trash text-danger mr-2  table_delete"></i></center>';
+                            }
+                        },
+                        {
+                            data: 'IsActive',
+                            title: 'Active',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                if (data == "Y") {
+                                    return `<center><label style="margin:0px!important; padding:0px!important;" class="tblswitch p-0 m-0">
+                                                                <input type="checkbox" disabled value="`+ data + `" checked name="IsActive" class="tbltoggleSwitch form-control form-control-sm ">
+                                                        <span class="tblslider"></span>
+                                                        </label></center>`;
+                                } else {
+                                    return `<center><label class="tblswitch">
+                                                                    <input type="checkbox" disabled value="`+ data + `"  name="IsActive" class="tbltoggleSwitch form-control form-control-sm ">
+                                                            <span class="tblslider"></span>
+                                                        </label></center>`;
+                                }
+
+                            }
+                        },
+                        {
+                            data: 'UserImage',
+                            title: 'User Picture',
+                            render: function (data, type, row) {
+                                // Customize the content of the image column
+                                return '<center><img data-bs-target="#exampleModalToggle" data-bs-toggle="modal" src="' + data + '" alt="Image" class="rounded p-0 shadow rounded-circle User_img" width="30" height="30"></center>';
+                            }
+                        },
+                        { data: 'UserName', title: 'User Name', className: 'tbl_usr_name ' },
+                        { data: 'RoleName', title: 'User Role', className: 'tbl_RoleName ' },
+                        {
+                            data: 'UserPwd',
+                            title: 'Password',
+                            className: 'tbl_usr_pwd ',
+                            render: function (data, type, row) {
+                                return 'XXXXXXX';
+                            }
+                        },
+                        { data: 'UserFname', title: 'First Name', className: 'tbl_usr_fname ' },
+                        { data: 'UserMname', title: 'Middle Name', className: 'tbl_usr_mname' },
+                        { data: 'UserLname', title: 'Last Name', className: 'tbl_usr_lname ' },
+                        { data: 'UserDob', title: 'Dob', className: 'tbl_usr_dob no-wrap ' },
+                        { data: 'UserGender', title: 'Gender', className: 'tbl_usr_gender' },
+                        { data: 'UserEmail', title: 'Email', className: 'tbl_usr_email' },
+                        { data: 'DeptName', title: 'Department', className: 'tbl_dept_id text-center' },
+                        { data: 'dept_id', title: 'dept_id', className: 'tbl_dept_id d-none' },
+                        { data: 'UserMobno', title: 'Mobile No', className: 'tbl_usr_mobno text-center' },
+                        { data: 'UserAddr', title: 'Address', className: 'tbl_UserAddr no-wrap' },
+                        { data: 'CntryName', title: 'Country', className: 'tbl_CntryName ' },
+                        { data: 'StateName', title: 'State', className: 'tbl_StateName' },
+                        { data: 'UserCity', title: 'City', className: 'tbl_UserCity' },
+                        { data: 'BranchNames', title: 'Branch Names', className: 'tbl_BranchNames text-center' },
+                        { data: 'CreatedBy',  title: 'User Created by', className: 'tbl_usr_crtby d-none' },
+                        { data: 'UserId', title: 'User_Id', className: 'tbl_usr_Id no-wrap d-none' },
+                        { data: 'BrchId', title: 'User_Branch_Id', className: 'tbl_usr_brch_id d-none' },
+                        { data: 'StateId', title: 'StateId', className: 'tbl_StateId d-none' },
+                        { data: 'CntryId', title: 'CntryId ', className: 'tbl_CntryId  d-none' },
+                        { data: 'Roleid', title: 'Roleid', className: 'tbl_usr_typ_nm d-none' },
+                        // Add more columns as needed
+                    ],
+                 
+
+                });
+                table.draw();
+              
+              
+            }
+
+            $(document).on("click", ".User_img", function () {
+               var data= $(this).attr('src');
+                var imageHtml = '<img src="' + data + '" />';
+                $(".document-viewer").html(imageHtml);
+            })
+            //Delete User
+            function DeleteUser(UserId){
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This User Is Permanetly Delete Form System..!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    confirmButtonColor: 'red',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("DELETEUSERDATA","User")',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: { Id: UserId },
+                            success: function (response) {
+                                if (response.success) {
+                                    $("#User_Form")[0].reset();
+                                    $("#Form_reset_btn").click();
+
+                                    getuser();
+                                    HideBtn()
+                                    notify(response.message, "", "top", "right", "fa fa-check mr-2", "success", "animated fadeInRight", "animated fadeOutRight")
+                                } else {
+                                    notify("Error To Updating Data", "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                                }
+                            },
+                            error: function (error) {
+                                notify(error.responseText, "", "top", "right", "fa fa-warning mr-2", "danger", "animated fadeInRight", "animated fadeOutRight")
+                                console.error('Error:', error.responseText);
+                            }
+                        });
+                        Swal.fire('Deleted!', 'Your data has been deleted.', 'success');
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire('Cancelled', 'Your action has been cancelled.', 'error');
+                    }
+                });
+            
+            }
+        }
+        // Region Navigation
+        {
+            var $table = $("#User_Table");
+            $table.find("tbody tr:first").addClass("active");
+            $(".btn_forward").click(function () {
+                var $currentRow = $table.find(".active");
+                var $nextRow = $currentRow.next("tr");
+                if ($nextRow.length > 0) {
+                    $currentRow.removeClass("active");
+                    $nextRow.addClass("active");
+                    bindrecord($nextRow);
+                } else {
+                    var $firstRow = $table.find("tbody tr:first");
+                    $table.find(".active").removeClass("active");
+                    $firstRow.addClass("active");
+                    bindrecord($firstRow);
+
+                }
+            });
+            $(".btn_backward").click(function () {
+                var $currentRow = $table.find(".active");
+                var $prevRow = $currentRow.prev("tr");
+                if ($prevRow.length > 0) {
+                    $currentRow.removeClass("active");
+                    $prevRow.addClass("active");
+                    bindrecord($prevRow);
+                } else {
+                    var $lastRow = $table.find("tr:last");
+                    $table.find(".active").removeClass("active");
+                    $lastRow.addClass("active");
+                    bindrecord($lastRow);
+                }
+            });
+            $(".btn_first").click(function () {
+                var $firstRow = $table.find("tbody tr:first");
+                $table.find(".active").removeClass("active");
+                $firstRow.addClass("active");
+                bindrecord($firstRow);
+            });
+            $(".btn_last").click(function () {
+                var $lastRow = $table.find("tr:last");
+                $table.find(".active").removeClass("active");
+                $lastRow.addClass("active");
+                bindrecord($lastRow);
+            });
+            $(".btn_reload").click(function () {
+                $("#User_Form")[0].reset();
+                $("#Form_reset_btn").click();
+                HideBtn()
+            });
+        }
+    })
+</script>
